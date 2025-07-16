@@ -1,0 +1,28 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.leftBar {
+  flex: 2;
+  overflow-y: auto;
+}
+
+.main {
+  flex: 5;
+  overflow-y: auto;
+}
+
+.rightBar {
+  flex: 3;
+  overflow-y: auto;
+}
