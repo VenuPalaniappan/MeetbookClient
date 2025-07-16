@@ -4,7 +4,7 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/authContext";
 import Navbar from "./components/navbar/NavBar";
 import LeftBar from "./components/leftBar/LeftBar";
@@ -16,26 +16,25 @@ import Profile from "./pages/profile/Profile";
 import "./app.scss";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient(); // ✅ Added here
+const queryClient = new QueryClient();
 
 function App() {
   const { currentUser } = useContext(AuthContext);
 
+
+
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>
-       
-          <Navbar />
-          <div style={{ display: "flex" }}>
-            <LeftBar />
-            <div style={{ flex: 6 }}>
-              <Outlet />
-              <div style={{ flex: 1 }}></div>
-            </div>
-            <RightBar />
-            
+        <Navbar />
+        <div style={{ display: "flex" }}>
+          <LeftBar />
+          <div style={{ flex: 6 }}>
+            <Outlet />
+            <div style={{ flex: 1 }}></div>
           </div>
-      
+          <RightBar />
+        </div>
       </QueryClientProvider>
     );
   };

@@ -18,14 +18,12 @@ const Post = ({ post }) => {
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
-  // ✅ useQuery for likes
-  const { isLoading, error, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["likes", post.id],
     queryFn: () =>
       makeRequest.get("/likes?postId=" + post.id).then((res) => res.data),
   });
 
-  // ✅ Like/unlike mutation
   const mutation = useMutation({
     mutationFn: (liked) => {
       if (liked) {
@@ -39,7 +37,6 @@ const Post = ({ post }) => {
     },
   });
 
-  // ✅ Delete post mutation
   const deleteMutation = useMutation({
     mutationFn: () => {
       return makeRequest.delete("/posts/" + post.id);
@@ -50,7 +47,7 @@ const Post = ({ post }) => {
   });
 
   const handleLike = () => {
-    if (!data) return; // prevent error if data is undefined
+    if (!data) return;
     mutation.mutate(data.includes(currentUser.id));
   };
 
@@ -71,18 +68,40 @@ const Post = ({ post }) => {
               >
                 <span className="name">{post.name}</span>
               </Link>
-              <span className="date">{moment(post.createdAt).fromNow()}</span>
+              <span className="date">
+                {post.friends && post.place ? (
+                  <>
+                    is with <strong>{post.friends}</strong> in <strong>{post.place}</strong>
+                  </>
+                ) : post.friends ? (
+                  <>
+                    is with <strong>{post.friends}</strong>
+                  </>
+                ) : post.place ? (
+                  <>
+                    is in <strong>{post.place}</strong>
+                  </>
+                ) : (
+                  <>{moment(post.createdAt).fromNow()}</>
+                )}
+              </span>
+              <span className="date">
+                {moment(post.createdAt).fromNow()}
+              </span>
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
           {menuOpen && post.userId === currentUser.id && (
-            <button onClick={handleDelete}>delete</button>
+            <button onClick={handleDelete}>Delete</button>
           )}
         </div>
+
         <div className="content">
           <p>{post.desc}</p>
+
           {post.img && <img src={"/upload/" + post.img} alt="" />}
         </div>
+
         <div className="info">
           <div className="item">
             {isLoading ? (
@@ -110,7 +129,8 @@ const Post = ({ post }) => {
             Share
           </div>
         </div>
-        {commentOpen && <Comments  />}
+
+        {commentOpen && <Comments postId={post.id} />}
       </div>
     </div>
   );
