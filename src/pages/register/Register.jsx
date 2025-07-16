@@ -1,5 +1,6 @@
+// src/pages/Register.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./register.scss";
 import axios from "axios";
 
@@ -11,6 +12,7 @@ const Register = () => {
     name: "",
   });
   const [err, setErr] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -18,15 +20,13 @@ const Register = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
-
     try {
       await axios.post("http://localhost:8800/api/auth/register", inputs);
+      navigate("/login");
     } catch (err) {
-      setErr(err.response.data);
+      setErr(err.response?.data || "Registration failed");
     }
   };
-
-  console.log(err)
 
   return (
     <div className="register">
@@ -34,10 +34,10 @@ const Register = () => {
         <div className="left">
           <h1>MeetBook.</h1>
           <p>
-            Lets conneet and
-            share your thoughts with the world. Join us to connect with friends!
+            Join a growing community. Connect, share and explore stories around
+            the world.
           </p>
-          <span>Do you have an account?</span>
+          <span>Already have an account?</span>
           <Link to="/login">
             <button>Login</button>
           </Link>
@@ -65,11 +65,11 @@ const Register = () => {
             />
             <input
               type="text"
-              placeholder="Name"
+              placeholder="Full Name"
               name="name"
               onChange={handleChange}
             />
-            {err && err}
+            {err && <p className="error">{err}</p>}
             <button onClick={handleClick}>Register</button>
           </form>
         </div>

@@ -1,9 +1,11 @@
 .register {
   height: 100vh;
-  background-color: rgb(193, 190, 255);
+  background: linear-gradient(135deg, #d0f0fd, #e0e7ff); // Fresh social app background
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 1000px;
+  animation: floatBackground 10s ease-in-out infinite;
 
   .card {
     width: 50%;
@@ -13,38 +15,49 @@
     border-radius: 10px;
     min-height: 600px;
     overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    transform-style: preserve-3d;
+    animation: floatCard 6s ease-in-out infinite;
 
     .left {
       flex: 1;
-      background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-        url("https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600")
-          center;
-      background-size: cover;
       padding: 50px;
       display: flex;
       flex-direction: column;
       gap: 30px;
       color: white;
+      background: 
+        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+        url("https://images.pexels.com/photos/3184421/pexels-photo-3184421.jpeg?auto=compress&cs=tinysrgb&w=1600")
+          center / cover no-repeat;
+      border-radius: 10px;
+      box-shadow:
+        inset 0 0 50px rgba(0, 0, 0, 0.3),
+        10px 10px 30px rgba(0, 0, 0, 0.2);
 
       h1 {
-        font-size: 100px;
-        line-height: 100px;
+        font-size: 70px;
+        line-height: 80px;
       }
-      
-      
 
       span {
         font-size: 14px;
       }
-      
+
       button {
         width: 50%;
         padding: 10px;
         border: none;
         background-color: white;
-        color: rebeccapurple;
+        color: #333;
         font-weight: bold;
         cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: #f0f0f0;
+        }
       }
     }
 
@@ -57,30 +70,60 @@
       justify-content: center;
 
       h1 {
-      color: #555;
+        color: #333;
       }
-      
+
       form {
         display: flex;
         flex-direction: column;
         gap: 30px;
-        
+
         input {
-        border: none;
-        border-bottom: 1px solid lightgray;
-        padding: 20px 10px;
+          border: none;
+          border-bottom: 1px solid lightgray;
+          padding: 20px 10px;
         }
-        
+
         button {
           width: 50%;
           padding: 10px;
           border: none;
-          background-color: #938eef;
+          background-color: #6f6af8;
           color: white;
           font-weight: bold;
           cursor: pointer;
+          border-radius: 5px;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: #574fd6;
+          }
         }
       }
+
+      .error {
+        color: red;
+        font-size: 14px;
+      }
     }
+  }
+}
+
+// Optional 3D float effects
+@keyframes floatBackground {
+  0%, 100% {
+    transform: perspective(800px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(800px) rotateX(2deg) rotateY(2deg);
+  }
+}
+
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0px) rotateY(-2deg);
+  }
+  50% {
+    transform: translateY(-15px) rotateY(2deg);
   }
 }
