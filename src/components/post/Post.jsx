@@ -1,3 +1,4 @@
+// Post.jsx
 import "./post.scss";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
@@ -20,8 +21,7 @@ const Post = ({ post }) => {
 
   const { isLoading, data } = useQuery({
     queryKey: ["likes", post.id],
-    queryFn: () =>
-      makeRequest.get("/likes?postId=" + post.id).then((res) => res.data),
+    queryFn: () => makeRequest.get("/likes?postId=" + post.id).then((res) => res.data),
   });
 
   const mutation = useMutation({
@@ -38,9 +38,7 @@ const Post = ({ post }) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => {
-      return makeRequest.delete("/posts/" + post.id);
-    },
+    mutationFn: () => makeRequest.delete("/posts/" + post.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
@@ -62,31 +60,33 @@ const Post = ({ post }) => {
           <div className="userInfo">
             <img src={"/upload/" + post.profilePic} alt="" />
             <div className="details">
-              <Link
-                to={`/profile/${post.userId}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
+              <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="name">{post.name}</span>
               </Link>
               <span className="date">
                 {post.friends && post.place ? (
                   <>
-                    is with <strong>{post.friends}</strong> in <strong>{post.place}</strong>
+                    is with <Link to={`/profile/${post.friendId}`}>{post.friends}</Link> in
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.place)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {post.place}
+                    </a>
+                    · {moment(post.createdAt).fromNow()}
                   </>
                 ) : post.friends ? (
                   <>
-                    is with <strong>{post.friends}</strong>
+                    is with <Link to={`/profile/${post.friendId}`}>{post.friends}</Link> · {moment(post.createdAt).fromNow()}
                   </>
                 ) : post.place ? (
                   <>
-                    is in <strong>{post.place}</strong>
+                    is in <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.place)}`} target="_blank" rel="noopener noreferrer">{post.place}</a> · {moment(post.createdAt).fromNow()}
                   </>
                 ) : (
                   <>{moment(post.createdAt).fromNow()}</>
                 )}
-              </span>
-              <span className="date">
-                {moment(post.createdAt).fromNow()}
               </span>
             </div>
           </div>
@@ -97,9 +97,24 @@ const Post = ({ post }) => {
         </div>
 
         <div className="content">
-          <p>{post.desc}</p>
+          <div className="image-wrapper">
+            {post.desc && <p className="image-description">{post.desc}</p>}
+            {post.img && <img src={"/upload/" + post.img} alt="" />}
+          </div>
 
-          {post.img && <img src={"/upload/" + post.img} alt="" />}
+          {post.place && (
+            <iframe
+              title="map"
+              width="100%"
+              height="250"
+              style={{ borderRadius: "10px", marginTop: "15px", border: "0" }}
+              loading="lazy"
+              allowFullScreen
+              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(
+                post.place
+              )}`}
+            ></iframe>
+          )}
         </div>
 
         <div className="info">
@@ -109,10 +124,7 @@ const Post = ({ post }) => {
             ) : (
               <>
                 {data?.includes(currentUser.id) ? (
-                  <FavoriteOutlinedIcon
-                    style={{ color: "red" }}
-                    onClick={handleLike}
-                  />
+                  <FavoriteOutlinedIcon style={{ color: "red" }} onClick={handleLike} />
                 ) : (
                   <FavoriteBorderOutlinedIcon onClick={handleLike} />
                 )}

@@ -1,201 +1,70 @@
 import "./rightBar.scss";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
+import { useQuery } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
 
 const RightBar = () => {
+  const { currentUser } = useContext(AuthContext);
+
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ["suggestions"],
+    queryFn: () =>
+      makeRequest.get("/users/suggestions").then((res) => res.data),
+  });
+
+  const { data: onlineFriends = [] } = useQuery({
+    queryKey: ["onlineFriends"],
+    queryFn: () =>
+      makeRequest.get("/users/online").then((res) => res.data),
+  });
+
   return (
     <div className="rightBar">
       <div className="container">
+        {/* Suggestions */}
         <div className="item">
           <span>Suggestions For You</span>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <span>Jane Doe</span>
+          {suggestions.map((user) => (
+            <div className="user" key={user.id}>
+              <div className="userInfo">
+                <img src={"/upload/" + user.profilePic} alt="" />
+                <span>{user.name}</span>
+              </div>
+              <div className="buttons">
+                <button>Follow</button>
+                <button>Dismiss</button>
+              </div>
             </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <span>Bill Clinton</span>
-            </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
-          </div>
+          ))}
         </div>
+
+        {/* Latest Activities (dummy for now) */}
         <div className="item">
           <span>Latest Activities</span>
           <div className="user">
             <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
+              <img src={"/upload/" + currentUser.profilePic} alt="" />
               <p>
-                <span>Trump</span> changed their cover picture
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <p>
-                <span>Obama</span> changed their cover picture
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <p>
-                <span>Kamala</span> changed their cover picture
-              </p>
-            </div>
-            <span>1 min ago</span>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <p>
-                <span>Cold</span> changed their cover picture
+                <span>{currentUser.name}</span> updated their profile picture
               </p>
             </div>
             <span>1 min ago</span>
           </div>
         </div>
+
+        {/* Online Friends */}
         <div className="item">
           <span>Online Friends</span>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Seee</span>
+          {onlineFriends.map((user) => (
+            <div className="user" key={user.id}>
+              <div className="userInfo">
+                <img src={"/upload/" + user.profilePic} alt="" />
+                <div className="online" />
+                <span>{user.name}</span>
+              </div>
             </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Saw</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Jump</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Crawl</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Handsome</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Pretty</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>LEE</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Low</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Janu</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Jane</span>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src=""
-                alt=""
-              />
-              <div className="online" />
-              <span>Mama</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

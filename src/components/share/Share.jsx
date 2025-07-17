@@ -8,12 +8,30 @@ import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 
+const dummyLocations = [
+  "Singapore, Singapore",
+  "Suntec Singapore Convention & Exhibition Centre",
+  "Sentosa Island, Singapore",
+  "Broth & Beyond Hot Pot",
+  "Esplanade MRT Station",
+  "PARKROYAL COLLECTION Marina Bay, Singapore",
+];
+
+const dummyFriends = [
+  { id: 1, name: "John Doe" },
+  { id: 2, name: "Jane Smith" },
+  { id: 3, name: "Mike Johnson" },
+  { id: 4, name: "Amanda Tan" },
+  { id: 5, name: "Satiah Kumar" },
+];
+
 const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
   const [place, setPlace] = useState("");
-  const [friends, setFriends] = useState("");
-  const [showPlaceInput, setShowPlaceInput] = useState(false);
+  const [friendInput, setFriendInput] = useState("");
+  const [selectedFriends, setSelectedFriends] = useState([]);
+  const [showPlaceDropdown, setShowPlaceDropdown] = useState(false);
   const [showFriendsInput, setShowFriendsInput] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
@@ -46,15 +64,23 @@ const Share = () => {
       desc,
       img: imgUrl,
       place: place.trim() || null,
-      friends: friends.trim() || null,
+      friends: selectedFriends.join(", ") || null,
     });
 
     setDesc("");
     setFile(null);
     setPlace("");
-    setFriends("");
-    setShowPlaceInput(false);
+    setFriendInput("");
+    setSelectedFriends([]);
+    setShowPlaceDropdown(false);
     setShowFriendsInput(false);
+  };
+
+  const handleSelectFriend = (friendName) => {
+    if (!selectedFriends.includes(friendName)) {
+      setSelectedFriends([...selectedFriends, friendName]);
+    }
+    setFriendInput("");
   };
 
   return (
@@ -70,7 +96,29 @@ const Share = () => {
           />
         </div>
 
-        {file && <img className="preview-img" src={URL.createObjectURL(file)} alt="preview" />}
+        {file && (
+          <img className="preview-img" src={URL.createObjectURL(file)} alt="preview" />
+        )}
+
+        {/* Location Preview */}
+        {place && (
+          <div className="location-preview">
+            📍 {place}
+            <span className="clear-btn" onClick={() => setPlace("")}>
+              ❌
+            </span>
+          </div>
+        )}
+
+        {/* Tagged Friends Preview */}
+        {selectedFriends.length > 0 && (
+          <div className="location-preview">
+            👥 {selectedFriends.join(", ")}
+            <span className="clear-btn" onClick={() => setSelectedFriends([])}>
+              ❌
+            </span>
+          </div>
+        )}
 
         <hr />
 
@@ -78,7 +126,7 @@ const Share = () => {
           <div className="actions">
             <div
               className="item"
-              onClick={() => setShowPlaceInput((prev) => !prev)}
+              onClick={() => setShowPlaceDropdown((prev) => !prev)}
               role="button"
               tabIndex={0}
             >
@@ -109,25 +157,61 @@ const Share = () => {
             />
           </div>
 
-          {/* Conditional input fields */}
-          {showPlaceInput && (
-            <input
-              type="text"
-              className="extra-input"
-              placeholder="Enter location"
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-            />
+          {/* Location Dropdown */}
+          {showPlaceDropdown && (
+            <div className="location-modal open">
+              <input
+                type="text"
+                className="location-input"
+                placeholder="Search location"
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
+              />
+              <div className="location-suggestions">
+                {dummyLocations
+                  .filter((loc) => loc.toLowerCase().includes(place.toLowerCase()))
+                  .map((loc, index) => (
+                    <div
+                      key={index}
+                      className="suggestion-item"
+                      onClick={() => {
+                        setPlace(loc);
+                        setShowPlaceDropdown(false);
+                      }}
+                    >
+                      📍 {loc}
+                    </div>
+                  ))}
+              </div>
+            </div>
           )}
 
+          {/* Friend Dropdown */}
           {showFriendsInput && (
-            <input
-              type="text"
-              className="extra-input"
-              placeholder="Tag friends (comma-separated)"
-              value={friends}
-              onChange={(e) => setFriends(e.target.value)}
-            />
+            <div className="friends-modal">
+              <input
+                type="text"
+                className="extra-input"
+                placeholder="Search and tag a friend"
+                value={friendInput}
+                onChange={(e) => setFriendInput(e.target.value)}
+              />
+              <div className="friend-suggestions">
+                {dummyFriends
+                  .filter((f) =>
+                    f.name.toLowerCase().includes(friendInput.toLowerCase())
+                  )
+                  .map((friend) => (
+                    <div
+                      key={friend.id}
+                      className="suggestion-item"
+                      onClick={() => handleSelectFriend(friend.name)}
+                    >
+                      👤 {friend.name}
+                    </div>
+                  ))}
+              </div>
+            </div>
           )}
 
           <button onClick={handleClick}>Post</button>
