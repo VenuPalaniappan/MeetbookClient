@@ -19,11 +19,10 @@ import Update from "../../components/update/Update";
 const Profile = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const { currentUser } = useContext(AuthContext);
-
   const userId = parseInt(useLocation().pathname.split("/")[2]);
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["user", userId], // added userId for cache key specificity
+    queryKey: ["user", userId],
     queryFn: () => makeRequest.get("/users/find/" + userId).then(res => res.data),
   });
 
@@ -54,18 +53,23 @@ const Profile = () => {
   if (error) return <div>Something went wrong!</div>;
   if (!data) return <div>No user data found.</div>;
 
+  const defaultCover = "/upload/default-cover.png";
+  const defaultProfile = "/upload/default-profile.png";
+
   return (
     <div className="profile">
       <div className="images">
         <img
-          src={data?.coverPic ? "/upload/" + data.coverPic : "/default-cover.png"}
-          alt="cover"
+          src={data.coverPic ? `/upload/${data.coverPic}` : defaultCover}
+          alt="Cover"
           className="cover"
+          onError={(e) => (e.target.src = defaultCover)}
         />
         <img
-          src={data?.profilePic ? "/upload/" + data.profilePic : "/default-profile.png"}
-          alt="profile"
+          src={data.profilePic ? `/upload/${data.profilePic}` : defaultProfile}
+          alt="Profile"
           className="profilePic"
+          onError={(e) => (e.target.src = defaultProfile)}
         />
       </div>
       <div className="profileContainer">
@@ -88,26 +92,24 @@ const Profile = () => {
             </a>
           </div>
           <div className="center">
-            <span>{data?.name || "No Name"}</span>
+            <span>{data.name}</span>
             <div className="info">
               <div className="item">
                 <PlaceIcon />
-                <span>{data?.city || "Unknown City"}</span>
+                <span>{data.city || "Unknown City"}</span>
               </div>
               <div className="item">
                 <LanguageIcon />
-                <span>{data?.website || "No Website"}</span>
+                <span>{data.website || "No Website"}</span>
               </div>
             </div>
             {rIsLoading ? (
-              "loading"
+              "loading..."
             ) : userId === currentUser?.id ? (
-              <button onClick={() => setOpenUpdate(true)}>update</button>
+              <button onClick={() => setOpenUpdate(true)}>Update</button>
             ) : (
               <button onClick={handleFollow}>
-                {relationshipData?.includes(currentUser?.id)
-                  ? "Following"
-                  : "Follow"}
+                {relationshipData?.includes(currentUser?.id) ? "Following" : "Follow"}
               </button>
             )}
           </div>
@@ -118,8 +120,14 @@ const Profile = () => {
         </div>
         <Posts userId={userId} />
       </div>
-      {openUpdate && <Update setOpenUpdate={setOpenUpdate} user={data} />}
+      {openUpdate && (
+        <div className="updateModal">
+         <div className="modalContent">
+         <Update setOpenUpdate={setOpenUpdate} user={data} />
     </div>
+    </div>
+    )}
+   </div>
   );
 };
 

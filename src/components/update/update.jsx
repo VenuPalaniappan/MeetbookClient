@@ -15,6 +15,7 @@ const Update = ({ setOpenUpdate, user }) => {
     website: user.website,
   });
 
+  <button className="closeBtn" onClick={() => setOpenUpdate(false)}>✕</button>
   const upload = async (file) => {
     try {
       const formData = new FormData();
@@ -22,7 +23,8 @@ const Update = ({ setOpenUpdate, user }) => {
       const res = await makeRequest.post("/upload", formData);
       return res.data;
     } catch (err) {
-      console.log(err);
+      console.log("Upload failed:", err);
+      return null;
     }
   };
 
@@ -32,21 +34,26 @@ const Update = ({ setOpenUpdate, user }) => {
 
   const queryClient = useQueryClient();
 
-  // ✅ Fixed mutation with React Query v5 syntax
   const mutation = useMutation({
-    mutationFn: (user) => makeRequest.put("/users", user),
+    mutationFn: (updatedUser) => makeRequest.put("/users", updatedUser),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 
-  const handleClick = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting update...");
 
-    let coverUrl = cover ? await upload(cover) : user.coverPic;
-    let profileUrl = profile ? await upload(profile) : user.profilePic;
+    const coverUrl = cover ? await upload(cover) : user.coverPic;
+    const profileUrl = profile ? await upload(profile) : user.profilePic;
 
-    mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
+    mutation.mutate({
+      ...texts,
+      coverPic: coverUrl,
+      profilePic: profileUrl,
+    });
+
     setOpenUpdate(false);
     setCover(null);
     setProfile(null);
@@ -56,8 +63,9 @@ const Update = ({ setOpenUpdate, user }) => {
     <div className="update">
       <div className="wrapper">
         <h1>Update Your Profile</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="files">
+            {/* Cover Picture */}
             <label htmlFor="cover">
               <span>Cover Picture</span>
               <div className="imgContainer">
@@ -65,9 +73,9 @@ const Update = ({ setOpenUpdate, user }) => {
                   src={
                     cover
                       ? URL.createObjectURL(cover)
-                      : "/upload/" + user.coverPic
+                      : `/upload/${user.coverPic}`
                   }
-                  alt=""
+                  alt="Cover"
                 />
                 <CloudUploadIcon className="icon" />
               </div>
@@ -79,6 +87,7 @@ const Update = ({ setOpenUpdate, user }) => {
               onChange={(e) => setCover(e.target.files[0])}
             />
 
+            {/* Profile Picture */}
             <label htmlFor="profile">
               <span>Profile Picture</span>
               <div className="imgContainer">
@@ -86,9 +95,9 @@ const Update = ({ setOpenUpdate, user }) => {
                   src={
                     profile
                       ? URL.createObjectURL(profile)
-                      : "/upload/" + user.profilePic
+                      : `/upload/${user.profilePic}`
                   }
-                  alt=""
+                  alt="Profile"
                 />
                 <CloudUploadIcon className="icon" />
               </div>
@@ -108,13 +117,15 @@ const Update = ({ setOpenUpdate, user }) => {
             name="email"
             onChange={handleChange}
           />
+
           <label>Password</label>
           <input
-            type="text"
+            type="password"
             value={texts.password}
             name="password"
             onChange={handleChange}
           />
+
           <label>Name</label>
           <input
             type="text"
@@ -122,24 +133,27 @@ const Update = ({ setOpenUpdate, user }) => {
             name="name"
             onChange={handleChange}
           />
-          <label>Country / City</label>
+
+          <label>City</label>
           <input
             type="text"
-            name="city"
             value={texts.city}
+            name="city"
             onChange={handleChange}
           />
+
           <label>Website</label>
           <input
             type="text"
-            name="website"
             value={texts.website}
+            name="website"
             onChange={handleChange}
           />
-          <button onClick={handleClick}>Update</button>
+
+          <button type="submit">Update</button>
         </form>
         <button className="close" onClick={() => setOpenUpdate(false)}>
-          close
+          Close
         </button>
       </div>
     </div>
