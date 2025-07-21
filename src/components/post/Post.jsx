@@ -42,6 +42,16 @@ const Post = ({ post }) => {
     },
   });
 
+   const handleShare = () => {
+    const postUrl= `${window.location.origin}/post/${post.id}`;
+    navigator.clipboard.writeText(postUrl).then(() => {
+      alert("Post link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy post link: ", err);
+      });
+    };
+
   const handleLike = () => {
     if (!data) return;
     mutation.mutate(data.includes(currentUser.id));
@@ -50,6 +60,8 @@ const Post = ({ post }) => {
   const handleDelete = () => {
     deleteMutation.mutate();
   };
+
+ 
 
   return (
     <div className="post">
@@ -108,7 +120,7 @@ const Post = ({ post }) => {
             <TextsmsOutlinedIcon />
             See Comments
           </div>
-          <div className="item">
+          <div className="item" onClick={handleShare}> 
             <ShareOutlinedIcon />
             Share
           </div>
@@ -125,6 +137,7 @@ const Post = ({ post }) => {
       </CommentModal>
     </div>
   );
+
 };
 
 export default Post;

@@ -23,6 +23,9 @@ const Comments = ({ postId }) => {
     },
   });
 
+
+
+  
   const handleClick = (e) => {
     e.preventDefault();
     if (desc.trim() !== "") {
@@ -30,6 +33,8 @@ const Comments = ({ postId }) => {
       setDesc("");
     }
   };
+
+
 
   return (
     <div className="comments">
