@@ -12,12 +12,14 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
 import CommentModal from "../commentmodal/CommentModal";
+import ShareModal from "../shareModal/shareModal";
 
 const Post = ({ post }) => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const { isLoading, data } = useQuery({
     queryKey: ["likes", post.id],
@@ -44,12 +46,12 @@ const Post = ({ post }) => {
 
    const handleShare = () => {
     const postUrl= `${window.location.origin}/post/${post.id}`;
-    navigator.clipboard.writeText(postUrl).then(() => {
-      alert("Post link copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy post link: ", err);
-      });
+   // navigator.clipboard.writeText(postUrl).then(() => {
+    //  alert("Post link copied to clipboard!");
+    //  })
+   //   .catch((err) => {
+      //  console.error("Failed to copy post link: ", err);
+    //  });
     };
 
   const handleLike = () => {
@@ -120,10 +122,13 @@ const Post = ({ post }) => {
             <TextsmsOutlinedIcon />
             See Comments
           </div>
-          <div className="item" onClick={handleShare}> 
-            <ShareOutlinedIcon />
-            Share
-          </div>
+          <div className="item" onClick={() => setIsShareModalOpen(true)}> 
+                <ShareOutlinedIcon />
+                Share
+                {isShareModalOpen && (
+                  <ShareModal post={post} onClose={() => setIsShareModalOpen(false)} />
+                )}
+              </div>
         </div>
       </div>
 
