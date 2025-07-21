@@ -8,7 +8,6 @@ import moment from "moment";
 const Comments = ({ postId }) => {
   const [desc, setDesc] = useState("");
   const { currentUser } = useContext(AuthContext);
-
   const queryClient = useQueryClient();
 
   const { isLoading, error, data } = useQuery({
@@ -24,40 +23,45 @@ const Comments = ({ postId }) => {
     },
   });
 
-  const handleClick = async (e) => {
+  const handleClick = (e) => {
     e.preventDefault();
-    mutation.mutate({ desc, postId });
-    setDesc("");
+    if (desc.trim() !== "") {
+      mutation.mutate({ desc, postId });
+      setDesc("");
+    }
   };
 
   return (
     <div className="comments">
+      {/* ✅ Comment input */}
       <div className="write">
-        <img src={"/upload/" + currentUser.profilePic} alt="" />
+        <img src={"/upload/" + currentUser.profilePic} alt="profile" />
         <input
           type="text"
-          placeholder="write a comment"
+          placeholder="Write a comment..."
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
         />
         <button onClick={handleClick}>Send</button>
       </div>
-      {error
-        ? "Something went wrong"
-        : isLoading
-        ? "loading"
-        : data.map((comment) => (
-            <div className="comment" key={comment.id}>
-              <img src={"/upload/" + comment.profilePic} alt="" />
-              <div className="info">
-                <span>{comment.name}</span>
-                <p>{comment.desc}</p>
-              </div>
-              <span className="date">
-                {moment(comment.createdAt).fromNow()}
-              </span>
+
+      {/* ✅ Comments list */}
+      {error ? (
+        "Something went wrong"
+      ) : isLoading ? (
+        "Loading..."
+      ) : (
+        data.map((comment) => (
+          <div className="comment" key={comment.id}>
+            <img src={"/upload/" + comment.profilePic} alt="user" />
+            <div className="info">
+              <span className="name">{comment.name}</span>
+              <p>{comment.desc}</p>
             </div>
-          ))}
+            <span className="date">{moment(comment.createdAt).fromNow()}</span>
+          </div>
+        ))
+      )}
     </div>
   );
 };

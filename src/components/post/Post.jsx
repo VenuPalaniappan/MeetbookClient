@@ -1,4 +1,3 @@
-// Post.jsx
 import "./post.scss";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
@@ -12,9 +11,10 @@ import moment from "moment";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
+import CommentModal from "../commentmodal/CommentModal";
 
 const Post = ({ post }) => {
-  const [commentOpen, setCommentOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
@@ -26,11 +26,9 @@ const Post = ({ post }) => {
 
   const mutation = useMutation({
     mutationFn: (liked) => {
-      if (liked) {
-        return makeRequest.delete("/likes?postId=" + post.id);
-      } else {
-        return makeRequest.post("/likes", { postId: post.id });
-      }
+      return liked
+        ? makeRequest.delete("/likes?postId=" + post.id)
+        : makeRequest.post("/likes", { postId: post.id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["likes", post.id] });
@@ -63,31 +61,7 @@ const Post = ({ post }) => {
               <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="name">{post.name}</span>
               </Link>
-              <span className="date">
-                {post.friends && post.place ? (
-                  <>
-                    is with <Link to={`/profile/${post.friendId}`}>{post.friends}</Link> in
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.place)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {post.place}
-                    </a>
-                    · {moment(post.createdAt).fromNow()}
-                  </>
-                ) : post.friends ? (
-                  <>
-                    is with <Link to={`/profile/${post.friendId}`}>{post.friends}</Link> · {moment(post.createdAt).fromNow()}
-                  </>
-                ) : post.place ? (
-                  <>
-                    is in <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.place)}`} target="_blank" rel="noopener noreferrer">{post.place}</a> · {moment(post.createdAt).fromNow()}
-                  </>
-                ) : (
-                  <>{moment(post.createdAt).fromNow()}</>
-                )}
-              </span>
+              <span className="date">{moment(post.createdAt).fromNow()}</span>
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
@@ -110,9 +84,7 @@ const Post = ({ post }) => {
               style={{ borderRadius: "10px", marginTop: "15px", border: "0" }}
               loading="lazy"
               allowFullScreen
-              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(
-                post.place
-              )}`}
+              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(post.place)}`}
             ></iframe>
           )}
         </div>
@@ -132,7 +104,7 @@ const Post = ({ post }) => {
               </>
             )}
           </div>
-          <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
+          <div className="item" onClick={() => setIsCommentModalOpen(true)}>
             <TextsmsOutlinedIcon />
             See Comments
           </div>
@@ -141,9 +113,16 @@ const Post = ({ post }) => {
             Share
           </div>
         </div>
-
-        {commentOpen && <Comments postId={post.id} />}
       </div>
+
+      {/* ✅ Final Modal Call */}
+      <CommentModal
+        isOpen={isCommentModalOpen}
+        onClose={() => setIsCommentModalOpen(false)}
+        post={post}
+      >
+        <Comments postId={post.id} />
+      </CommentModal>
     </div>
   );
 };
