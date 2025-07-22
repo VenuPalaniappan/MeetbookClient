@@ -74,23 +74,6 @@ const Profile = () => {
       </div>
       <div className="profileContainer">
         <div className="uInfo">
-          <div className="left">
-            <a href="http://facebook.com" target="_blank" rel="noopener noreferrer">
-              <FacebookTwoToneIcon fontSize="large" />
-            </a>
-            <a href="http://instagram.com" target="_blank" rel="noopener noreferrer">
-              <InstagramIcon fontSize="large" />
-            </a>
-            <a href="http://twitter.com" target="_blank" rel="noopener noreferrer">
-              <TwitterIcon fontSize="large" />
-            </a>
-            <a href="http://linkedin.com" target="_blank" rel="noopener noreferrer">
-              <LinkedInIcon fontSize="large" />
-            </a>
-            <a href="http://pinterest.com" target="_blank" rel="noopener noreferrer">
-              <PinterestIcon fontSize="large" />
-            </a>
-          </div>
           <div className="center">
             <span>{data.name}</span>
             <div className="info">

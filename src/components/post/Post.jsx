@@ -73,7 +73,7 @@ const Post = ({ post }) => {
             <img src={"/upload/" + post.profilePic} alt="" />
             <div className="details">
               <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
-                <span className="name">{post.name}</span>
+                <span className="name">{post.userName || currentUser.name} </span>
               </Link>
               <span className="date">{moment(post.createdAt).fromNow()}</span>
             </div>
@@ -98,7 +98,7 @@ const Post = ({ post }) => {
               style={{ borderRadius: "10px", marginTop: "15px", border: "0" }}
               loading="lazy"
               allowFullScreen
-              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_API_KEY&q=${encodeURIComponent(post.place)}`}
+              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAWSbf4zi5KI7t5FhcvtvN6XZ_zC-Snu3A&q=${encodeURIComponent(post.place)}`}
             ></iframe>
           )}
         </div>

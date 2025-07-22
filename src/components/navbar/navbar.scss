@@ -1,25 +1,30 @@
 @import "../../style.scss";
 
 .navbar {
-  display: flex;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    height: 50px;
+     height: auto;
     border-bottom: 1px solid lightgray;
     position: sticky;
     z-index: 999;
+    background-color: white;
     
 
     .left {
       display: flex;
       align-items: center;
       gap: 30px;
+      flex: 1;
+      min-width: 0;
 
       span {
         font-weight: bold;
         font-size: 20px;
-        color:darkblue
+        color:darkblue;
+        white-space: nowrap;
         
       }
 
@@ -27,14 +32,18 @@
         display: flex;
         align-items: center;
         gap: 10px;
-       border:1px solid lightgray;
+        border:1px solid lightgray;
         border-radius: 5px;
         padding: 5px;
+        max-width: 300px;
+        flex: 1;
 
         input {
           border: none;
-          width: 500px;
-          background-color: transparent;
+           min-width: 100px;
+            max-width: 100%;
+            width: 100%;
+            background-color: transparent;
           
 
           @include mobile{
@@ -42,7 +51,7 @@
           }
 
           @include tablet{
-            width: 200px;
+            width: 150px;
           }
         }
       }
@@ -53,9 +62,7 @@
       display: flex;
       align-items: center;
       gap: 20px;
-
-       > * {
-    flex-shrink: 0; // ✅ This prevents icons from collapsing
+      flex-shrink: 0;
   }
 
       @include mobile{
@@ -82,4 +89,4 @@
        
       }
     }
-  }
+  

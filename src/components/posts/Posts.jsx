@@ -12,11 +12,16 @@ const Posts = ({ userId }) => {
 
   return (
     <div className="posts">
-      {error
-        ? "Something went wrong!"
-        : isLoading
-        ? "Loading..."
-        : data.map((post) => <Post post={post} key={post.id} />)}
+      {error? ( "Something went wrong!")
+      : isLoading ? (
+        "Loading..."
+      ) : Array.isArray(data) ? (
+        data.map((post) => (
+          <Post post={post} key={`${post.id}-${post.createdAt}`} />
+        ))
+      ) : (
+        "No posts found"
+      )}
     </div>
   );
 };
