@@ -46,12 +46,7 @@ const Post = ({ post }) => {
 
    const handleShare = () => {
     const postUrl= `${window.location.origin}/post/${post.id}`;
-   // navigator.clipboard.writeText(postUrl).then(() => {
-    //  alert("Post link copied to clipboard!");
-    //  })
-   //   .catch((err) => {
-      //  console.error("Failed to copy post link: ", err);
-    //  });
+   
     };
 
   const handleLike = () => {
@@ -102,6 +97,19 @@ const Post = ({ post }) => {
             ></iframe>
           )}
         </div>
+       
+        {post.friends && (
+            <div className="friends-tagged" style={{ marginTop: "10px", fontWeight: 500 }}>
+              👥 Tagged:{" "}
+              {post.friends
+                .split(",")
+                .map((friend, i) => (
+                  <span key={i} style={{ marginRight: "8px", color: "#4267B2" }}>
+                    {friend.trim()}
+                  </span>
+                ))}
+            </div>
+          )}
 
         <div className="info">
           <div className="item">
@@ -132,7 +140,7 @@ const Post = ({ post }) => {
         </div>
       </div>
 
-      {/* ✅ Final Modal Call */}
+     
       <CommentModal
         isOpen={isCommentModalOpen}
         onClose={() => setIsCommentModalOpen(false)}

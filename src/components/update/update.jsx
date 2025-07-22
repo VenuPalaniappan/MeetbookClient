@@ -15,7 +15,7 @@ const Update = ({ setOpenUpdate, user }) => {
     website: user.website,
   });
 
-  <button className="closeBtn" onClick={() => setOpenUpdate(false)}>✕</button>
+  
   const upload = async (file) => {
     try {
       const formData = new FormData();
@@ -62,10 +62,10 @@ const Update = ({ setOpenUpdate, user }) => {
   return (
     <div className="update">
       <div className="wrapper">
+        <button className="closeBtn" onClick={() => setOpenUpdate(false)}>✕</button>
         <h1>Update Your Profile</h1>
         <form onSubmit={handleSubmit}>
           <div className="files">
-            {/* Cover Picture */}
             <label htmlFor="cover">
               <span>Cover Picture</span>
               <div className="imgContainer">
@@ -87,7 +87,7 @@ const Update = ({ setOpenUpdate, user }) => {
               onChange={(e) => setCover(e.target.files[0])}
             />
 
-            {/* Profile Picture */}
+        
             <label htmlFor="profile">
               <span>Profile Picture</span>
               <div className="imgContainer">

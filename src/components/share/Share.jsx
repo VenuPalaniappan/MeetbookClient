@@ -110,7 +110,7 @@ const Share = () => {
           </div>
         )}
 
-        {/* Tagged Friends Preview */}
+      
         {selectedFriends.length > 0 && (
           <div className="location-preview">
             👥 {selectedFriends.join(", ")}
@@ -157,7 +157,7 @@ const Share = () => {
             />
           </div>
 
-          {/* Location Dropdown */}
+      
           {showPlaceDropdown && (
             <div className="location-modal open">
               <input
@@ -170,9 +170,9 @@ const Share = () => {
               <div className="location-suggestions">
                 {dummyLocations
                   .filter((loc) => loc.toLowerCase().includes(place.toLowerCase()))
-                  .map((loc, index) => (
+                  .map((loc) => (
                     <div
-                      key={index}
+                      key={loc}
                       className="suggestion-item"
                       onClick={() => {
                         setPlace(loc);
@@ -186,7 +186,6 @@ const Share = () => {
             </div>
           )}
 
-          {/* Friend Dropdown */}
           {showFriendsInput && (
             <div className="friends-modal">
               <input
@@ -203,7 +202,7 @@ const Share = () => {
                   )
                   .map((friend) => (
                     <div
-                      key={friend.id}
+                      key={friend.id + "-" + friend.name}
                       className="suggestion-item"
                       onClick={() => handleSelectFriend(friend.name)}
                     >

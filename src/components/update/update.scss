@@ -1,13 +1,13 @@
 @import "../../style.scss";
 
 .update {
-  @include themify($themes) {
+  
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(19, 18, 18, 0.87);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,12 +17,14 @@
       margin: auto;
       width: 40%;
       height: 70%;
-      background-color: themed("bg");
       padding: 50px;
       z-index: 999;
       display: flex;
       flex-direction: column;
       gap: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+      
       -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
       -moz-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
       box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
@@ -34,7 +36,7 @@
       }
 
       h1 {
-        color: lightgrey;
+        color: white;
       
         @include mobile {
          font-size: 20px;
@@ -57,7 +59,7 @@
           display: flex;
           flex-direction: column;
           gap: 10px;
-          color: gray;
+          color: white;
           font-size: 14px;
 
           .imgContainer {
@@ -85,9 +87,9 @@
         input {
           padding: 5px;
           border: none;
-          border-bottom: 1px solid themed("border");
+         
           color: gray;
-          background-color: transparent;
+          background-color: whitesmoke;
         }
 
         button {
@@ -111,14 +113,14 @@
       }
 
       .closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: themed("textColorSoft");
+          position: absolute;
+          top: 10px;
+          right: 15px;
+          background: none;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+          
 
   &:hover {
     color: red;
@@ -126,4 +128,3 @@
 }
     }
   }
-}

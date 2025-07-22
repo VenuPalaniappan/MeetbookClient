@@ -10,14 +10,30 @@ const Posts = ({ userId }) => {
       makeRequest.get("/posts?userId=" + userId).then((res) => res.data),
   });
 
+   if (!isLoading && data) {
+    const keys = data.map((p) => `${p.id}-${p.createdAt}`);
+    const duplicates = keys.filter((k, i) => keys.indexOf(k) !== i);
+    if (duplicates.length > 0) {
+      console.warn("Duplicate post keys found:", duplicates);
+    }
+  }
+
+  const uniquePosts = Array.isArray(data)
+    ? Array.from(
+        new Map(
+          data.map((post) => [`${post.id}-${post.createdAt}`, post])
+        ).values()
+      )
+    : [];
+
   return (
     <div className="posts">
       {error? ( "Something went wrong!")
       : isLoading ? (
         "Loading..."
       ) : Array.isArray(data) ? (
-        data.map((post) => (
-          <Post post={post} key={`${post.id}-${post.createdAt}`} />
+        [...new Map(data.map((post) => [post.id, post])).values()].map((post) => (
+           <Post key={`${post.id}-${post.createdAt}`} post={post} />
         ))
       ) : (
         "No posts found"
