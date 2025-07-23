@@ -60,7 +60,25 @@
           span {
             font-size: 14px;
           }
+
+           .icons {
+              display: flex;
+              flex-direction: column;
+              gap: 50px;
+              padding: 8px 12px;
+
+              .icon-item {
+                display: flex;
+                align-items: center;
+                gap: 50px;
+                cursor: pointer;
+
+                span {
+                  font-size: 14px;
+                }
         }
       }
     }
+}
+}
 }

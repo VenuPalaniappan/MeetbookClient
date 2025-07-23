@@ -154,26 +154,26 @@
       }
 
       .updateModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 999;
 
-  .modalContent {
-   
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 600px;
-    width: 90%;
-    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
-    position: relative;
-  }
+        .modalContent {
+        
+          padding: 30px;
+          border-radius: 12px;
+          max-width: 600px;
+          width: 90%;
+          box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+          position: relative;
+        }
 }
 
       // Additional section styling (e.g., posts)

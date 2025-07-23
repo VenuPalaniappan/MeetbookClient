@@ -32,19 +32,29 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        border:1px solid lightgray;
-        border-radius: 5px;
-        padding: 5px;
-        max-width: 300px;
-        flex: 1;
+        background-color: #f1f3f4;
+        border-radius: 25px;
+        padding: 8px 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+
+        &:hover,
+        &:focus-within {
+          background-color: #e8eaed;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
 
         input {
           border: none;
-           min-width: 100px;
-            max-width: 100%;
-            width: 100%;
-            background-color: transparent;
-          
+          outline: none;
+          background: transparent;
+          font-size: 16px;
+          width: 200px;
+          color: #444;
+
+          &::placeholder {
+            color: #888;
+          }
 
           @include mobile{
             display: none;
@@ -53,6 +63,10 @@
           @include tablet{
             width: 150px;
           }
+        }
+         .icon {
+          color: #777;
+          font-size: 20px;
         }
       }
     }
