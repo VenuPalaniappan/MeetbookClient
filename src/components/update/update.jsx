@@ -37,7 +37,7 @@ const Update = ({ setOpenUpdate, user }) => {
   const mutation = useMutation({
     mutationFn: (updatedUser) => makeRequest.put("/users", updatedUser),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["user", user.id]});
     },
   });
 
@@ -52,13 +52,17 @@ const Update = ({ setOpenUpdate, user }) => {
       ...texts,
       coverPic: coverUrl,
       profilePic: profileUrl,
-    });
-
-    setOpenUpdate(false);
-    setCover(null);
-    setProfile(null);
-  };
-
+    },
+  {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", user.id] });
+      setOpenUpdate(false); 
+      setCover(null);
+      setProfile(null);
+    },
+  }
+);
+}
   return (
     <div className="update">
       <div className="wrapper">

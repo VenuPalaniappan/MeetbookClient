@@ -1,19 +1,14 @@
 import "./leftBar.scss";
 import Friends from "../../assets/1.png";
 import Groups from "../../assets/2.png";
-import Market from "../../assets/3.png";
 import Watch from "../../assets/4.png";
 import Memories from "../../assets/5.png";
-import Events from "../../assets/6.png";
-import Gaming from "../../assets/7.png";
 import Gallery from "../../assets/8.png";
 import Videos from "../../assets/9.png";
 import Messages from "../../assets/10.png";
-import Tutorials from "../../assets/11.png";
-import Courses from "../../assets/12.png";
-import Fund from "../../assets/13.png";
 import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
+import { Icon } from '@iconify/react';
 
 const LeftBar = () => {
 
@@ -31,20 +26,20 @@ const LeftBar = () => {
             <span>{currentUser.name}</span>
           </div>
           <div className="item">
-            <img src={Friends} alt="" />
+            <Icon icon="fluent:people-community-32-filled" color="#6a1b9a" width="24" />
             <span>Friends</span>
           </div>
           <div className="item">
-            <img src={Groups} alt="" />
+            <Icon icon="mdi:account-group" color="#388e3c" width="24" />
             <span>Groups</span>
           </div>
           
           <div className="item">
-            <img src={Watch} alt="" />
+            <Icon icon="mdi:play-box-multiple" color="#f57c00" width="24" />
             <span>Watch</span>
           </div>
           <div className="item">
-            <img src={Memories} alt="" />
+           <Icon icon="material-symbols:history-edu-rounded" color="#0288d1" width="24" />
             <span>Memories</span>
           </div>
         </div>
@@ -54,15 +49,15 @@ const LeftBar = () => {
          
           
           <div className="item">
-            <img src={Gallery} alt="" />
+           <Icon icon="mdi:image-multiple" color="#43a047" width="24" />
             <span>Gallery</span>
           </div>
           <div className="item">
-            <img src={Videos} alt="" />
+            <Icon icon="mdi:video-box" color="#7b1fa2" width="24" />
             <span>Videos</span>
           </div>
           <div className="item">
-            <img src={Messages} alt="" />
+           <Icon icon="material-symbols:mail-outline" color="#1976d2" width="24" />
             <span>Messages</span>
           </div>
         </div>

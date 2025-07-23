@@ -63,30 +63,106 @@
       align-items: center;
       gap: 20px;
       flex-shrink: 0;
-  }
+      }
 
       @include mobile{
         display: none;
       }
 
-      .user {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 500;
+    .profile-wrapper {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-        @include tablet{
-          display: none;
+      img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 45px;
+        right: 0;
+        width: 260px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        padding: 10px 0;
+        font-size: 14px;
+
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 15px;
+
+          img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+
+          .name {
+            font-weight: bold;
+          }
         }
 
-        img {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          object-fit: cover;
+        .see-all {
+          text-align: center;
+          padding: 10px 15px;
+          font-weight: 500;
+          color: #1877f2;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #f0f2f5;
+          }
         }
 
-       
+        hr {
+          margin: 5px 0;
+          border: none;
+          border-top: 1px solid #ccc;
+        }
+
+        .menu-section {
+          .item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            &:hover {
+              background-color: #f0f2f5;
+            }
+          }
+        }
+
+        .logout {
+          padding: 10px 15px;
+          color: red;
+          font-weight: bold;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #f0f2f5;
+          }
+
+          .logo {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+            vertical-align: middle;
+          
+            }
+          }
+        }
       }
     }
   
