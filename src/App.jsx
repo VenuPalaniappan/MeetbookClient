@@ -15,6 +15,9 @@ import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import Friends from "./pages/friends/Friends";
 import FriendsLayout from "./layouts/FriendsLayout";
+import Gallery from "./pages/gallery/Gallery";
+import GalleryLayout from "./layouts/GalleryLayout";
+
 import "./app.scss";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -79,8 +82,23 @@ function App() {
         path: "/friends",
         element: <Friends />,
       },
-        ],
+    ],
   },
+  {
+    path: "/gallery",
+    element: (
+      <ProtectedRoute>
+        <GalleryLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Gallery />,
+      },
+    ],
+  },
+
     {
       path: "/login",
       element: <Login />,
@@ -89,10 +107,10 @@ function App() {
       path: "/register",
       element: <Register />,
     },
-   
-  ]);
+  ]); 
+ 
 
   return <RouterProvider router={router} />;
-}
+  }
 
 export default App;

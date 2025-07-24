@@ -25,21 +25,14 @@ const LeftBar = () => {
                     <span>Friends</span>
               </div>
           </Link>
-          <Link to="/groups" style={{ textDecoration: "none", color: "inherit" }}>
+
+          <Link to="/gallery" style={{ textDecoration: "none", color: "inherit" }}>
               <div className="item">
-                <Icon icon="mdi:account-group" color="#388e3c" width="24" />
-                    <span>Groups</span>
+                 <Icon icon="mdi:image-multiple" color="#43a047" width="24" />
+                    <span>Gallery</span>
               </div>
           </Link>
-         
-         
-          <span>Your shortcuts</span>
-         
-          
-          <div className="item">
-           <Icon icon="mdi:image-multiple" color="#43a047" width="24" />
-            <span>Gallery</span>
-          </div>
+        
           <div className="item">
             <Icon icon="mdi:video-box" color="#7b1fa2" width="24" />
             <span>Videos</span>
