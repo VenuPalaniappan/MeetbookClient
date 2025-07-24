@@ -80,10 +80,13 @@ const Post = ({ post }) => {
         </div>
 
         <div className="content">
-          <div className="image-wrapper">
-            {post.desc && <p className="image-description">{post.desc}</p>}
-            {post.img && <img src={"/upload/" + post.img} alt="" />}
-          </div>
+          {post.desc && <p className="description">{post.desc}</p>}
+
+          {post.img && (
+            <div className="image-wrapper">
+              <img src={"/upload/" + post.img} alt="" />
+            </div>
+          )}
 
           {post.place && (
             <iframe

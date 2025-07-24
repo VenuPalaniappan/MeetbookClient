@@ -17,6 +17,7 @@ import Friends from "./pages/friends/Friends";
 import FriendsLayout from "./layouts/FriendsLayout";
 import Gallery from "./pages/gallery/Gallery";
 import GalleryLayout from "./layouts/GalleryLayout";
+import PostPage from "./pages/post/PostPages";
 
 import "./app.scss";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -68,6 +69,10 @@ function App() {
           path: "/profile/:id",
           element: <Profile />,
         },
+        {
+        path: "/post/:postId",
+        element: <PostPage />,
+      }
       ],
     },
     {
@@ -108,6 +113,8 @@ function App() {
       element: <Register />,
     },
   ]); 
+
+  
  
 
   return <RouterProvider router={router} />;
