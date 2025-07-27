@@ -48,13 +48,13 @@
       margin-bottom: 20px;
     }
 
-    .gallery-grid {
+  .gallery-grid {
        display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 15px;
         padding: 20px;
     }
-      .gallery-item {
+  .gallery-item {
         img {
         width: 100%;
         height: 200px;
@@ -69,5 +69,27 @@
         }
       }
     }
-  }
+  .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); // You can adjust 200px
+  gap: 16px;
+  padding: 20px;
 }
+
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 1 / 1; // optional: makes square layout
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  }
+}}

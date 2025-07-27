@@ -12,12 +12,13 @@ const Gallery = () => {
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const tabs = [
     { id: "home", label: "My Gallery", icon: "ic:baseline-photo-library" },
+    { id: "profile", label: "Profile Pictures", icon: "mdi:account-circle" },
+    { id: "cover", label: "Cover Pictures", icon: "mdi:image-area" },
    
   ];
 
@@ -42,9 +43,9 @@ const Gallery = () => {
   // Filter images based on the active tab
   const filteredImages = images.filter((img) =>
     activeTab === "profile"
-      ? img.includes("profile")
+      ? img.type === "profile"
       : activeTab === "cover"
-      ? img.includes("cover")
+      ? img.type === "cover"
       : true
   );
 
@@ -70,10 +71,10 @@ const Gallery = () => {
       <div className="content">
         <h3>
           {activeTab === "home"
-            ? "All Uploaded Photos"
+            ? ""
             : activeTab === "profile"
-            ? "Profile Picture"
-            : "Cover Picture"}
+            ? ""
+            : ""}
         </h3>
 
         {isLoading ? (
@@ -86,7 +87,7 @@ const Gallery = () => {
               filteredImages.map((img, index) => (
                 <div className="gallery-item" key={index}>
                   <img
-                    src={`/upload/${img}`}
+                    src={`/upload/${img.image}`}
                     alt={`User upload ${index}`}
                     onClick={() => {
                       setPhotoIndex(index);
@@ -106,7 +107,7 @@ const Gallery = () => {
             open={isOpen}
             close={() => setIsOpen(false)}
             slides={filteredImages.map((img) => ({
-              src: `/upload/${img}`,
+              src: `/upload/${img.image}`,
             }))}
             index={photoIndex}
             on={{ view: ({ index }) => setPhotoIndex(index) }}

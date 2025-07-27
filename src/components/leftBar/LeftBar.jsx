@@ -34,10 +34,6 @@ const LeftBar = () => {
           </Link>
         
           <div className="item">
-            <Icon icon="mdi:video-box" color="#7b1fa2" width="24" />
-            <span>Videos</span>
-          </div>
-          <div className="item">
            <Icon icon="material-symbols:mail-outline" color="#1976d2" width="24" />
             <span>Messages</span>
           </div>
