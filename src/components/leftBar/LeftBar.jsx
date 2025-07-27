@@ -32,11 +32,15 @@ const LeftBar = () => {
                     <span>Gallery</span>
               </div>
           </Link>
+
+          <Link to="/message" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="item">
+                 <Icon icon="material-symbols:mail-outline" color="#1976d2" width="24" />
+                    <span>Message</span>
+              </div>
+          </Link>
         
-          <div className="item">
-           <Icon icon="material-symbols:mail-outline" color="#1976d2" width="24" />
-            <span>Messages</span>
-          </div>
+         
         </div>
         <hr />
          </div>

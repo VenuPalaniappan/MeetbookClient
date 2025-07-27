@@ -18,6 +18,8 @@ import FriendsLayout from "./layouts/FriendsLayout";
 import Gallery from "./pages/gallery/Gallery";
 import GalleryLayout from "./layouts/GalleryLayout";
 import PostPage from "./pages/post/PostPages";
+import Message from "./pages/message/Message";
+import MessageLayout from "./layouts/MessageLayout";
 
 import "./app.scss";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -100,6 +102,21 @@ function App() {
       {
         index: true,
         element: <Gallery />,
+      },
+    ],
+  },
+   {
+    path: "/message",
+    element: (
+      <ProtectedRoute>
+        <MessageLayout />
+       
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Message />,
       },
     ],
   },
