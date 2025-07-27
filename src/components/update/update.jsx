@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState,useContext} from "react";
 import { makeRequest } from "../../axios";
 import "./update.scss";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { AuthContext } from "../../context/authContext";
 
 const Update = ({ setOpenUpdate, user }) => {
   const [cover, setCover] = useState(null);
@@ -15,7 +16,9 @@ const Update = ({ setOpenUpdate, user }) => {
     website: user.website,
   });
 
-  
+  const { currentUser, setCurrentUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
+
   const upload = async (file) => {
     try {
       const formData = new FormData();
@@ -32,7 +35,6 @@ const Update = ({ setOpenUpdate, user }) => {
     setTexts((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: (updatedUser) => makeRequest.put("/users", updatedUser),
@@ -56,6 +58,20 @@ const Update = ({ setOpenUpdate, user }) => {
   {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", user.id] });
+      if (currentUser.id === user.id) {
+      const updatedUser = {
+              ...currentUser,
+              name: texts.name,
+              city: texts.city,
+              website: texts.website,
+              profilePic: profileUrl,
+              coverPic: coverUrl,
+            };
+
+            setCurrentUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+          }
+
       setOpenUpdate(false); 
       setCover(null);
       setProfile(null);

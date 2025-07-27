@@ -26,7 +26,7 @@ const login = async (inputs) => {
   }, [currentUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser, login  }}>
       {children}
     </AuthContext.Provider>
   );
