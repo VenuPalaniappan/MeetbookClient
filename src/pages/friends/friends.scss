@@ -69,36 +69,57 @@
   }
 
   .card-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
     gap: 20px;
-    flex-wrap: wrap;
+    padding: 10px;
   }
 
   .friend-card {
-    background-color: #f6f6f6;
-    padding: 15px;
-    border-radius: 10px;
-    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    height: 250px;
+    overflow: hidden;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.02);
+    }
 
     img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 10px;
     }
 
     h4 {
-      margin: 10px 0;
+        margin: 10px 0;
+        font-weight: 600;
+        text-align: center;
     }
 
     button {
-      width: 100%;
-      margin-top: 5px;
-      padding: 8px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+        margin: 4px 0;
+        width: 100%;
+        padding: 8px;
+        border: none;
+        border-radius: 6px;
+        background-color: #333;
+        color: white;
+        cursor: pointer;
+
+    &:hover {
+      background-color: #555;
+    }
 
       &.add {
         background-color: #2374e1;

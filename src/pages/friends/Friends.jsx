@@ -43,6 +43,23 @@ const Friends = () => {
             }
         }, [activeTab]);
 
+      const addFriend = async (friendId) => {
+      try {
+        await makeRequest.post("/friends/add", { friendId });
+        setSuggestedFriends((prev) => prev.filter((f) => f.id !== friendId));
+      } catch (err) {
+        console.error("Error adding friend:", err);
+      }
+    };
+    const handleUnfriend = async (friendId) => {
+      try {
+        await makeRequest.post("/friends/unfriend", { friendId });
+        setAllFriends((prev) => prev.filter((f) => f.id !== friendId));
+      } catch (err) {
+        console.error("Error unfriending user:", err);
+      }
+    };
+
   return (
     <div className="friends-page">
       <div className="sidebar">
@@ -64,9 +81,9 @@ const Friends = () => {
       <div className="content">
         <h3>
             {(activeTab === "suggestions"|| activeTab === "home")
-                ? "People you may know"
+                ? ""
                 : activeTab === "allFriends"
-                ? "Your Friends"
+                ? ""
                 : ""}
         </h3>
 
@@ -76,7 +93,7 @@ const Friends = () => {
         <div className="friend-card" key={friend.id}>
         <img src={`/upload/${friend.profilePic}`} alt={friend.name} />
         <h4>{friend.name}</h4>
-        <button className="add">Add friend</button>
+        <button className="add" onClick={() => addFriend(friend.id)}>Add friend</button>
         <button className="remove">Remove</button>
       </div>
     ))}
@@ -86,7 +103,7 @@ const Friends = () => {
       <div className="friend-card" key={friend.id}>
         <img src={`/upload/${friend.profilePic}`} alt={friend.name} />
         <h4>{friend.name}</h4>
-        <button className="remove">Unfriend</button>
+        <button className="remove" onClick={() => handleUnfriend(friend.id)}>Unfriend</button>
       </div>
     ))}
     </div>
