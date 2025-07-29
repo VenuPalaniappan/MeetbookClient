@@ -106,11 +106,10 @@ function App() {
     ],
   },
    {
-    path: "/message",
+    path: "/messages",
     element: (
       <ProtectedRoute>
         <MessageLayout />
-       
       </ProtectedRoute>
     ),
     children: [

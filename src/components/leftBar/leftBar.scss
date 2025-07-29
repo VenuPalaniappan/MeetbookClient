@@ -6,6 +6,7 @@
    top:70px;
    height: calc(100vh - 70px);
    overflow: scroll;
+   z-index: 1;
 
 
    &::-webkit-scrollbar {

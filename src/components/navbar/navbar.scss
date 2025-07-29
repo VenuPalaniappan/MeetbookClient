@@ -79,9 +79,23 @@
       flex-shrink: 0;
       }
 
-      @include mobile{
-        display: none;
-      }
+       .message-icon-wrapper {
+    position: relative;
+    cursor: pointer;
+
+    .red-dot {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      width: 8px;
+      height: 8px;
+      background-color: red;
+      border-radius: 50%;
+      z-index: 2;
+    }
+  }
+}
+
 
     .profile-wrapper {
       position: relative;
@@ -176,7 +190,9 @@
           
             }
           }
+         
+
         }
       }
-    }
+    
   

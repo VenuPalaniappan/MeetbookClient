@@ -1,54 +1,69 @@
-import React, { useState } from 'react';
+import "./message.scss";
+import { useState, useEffect,useContext } from "react";
+import { makeRequest } from "../../axios";
+import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
 
-function Message({ onSend }) {
-    const [message, setMessage] = useState('');
+const Message = ({ onClose, onStartChat }) => {
+  const [friends, setFriends] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setMessage(e.target.value);
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const res = await makeRequest.get("/friends/all");
+        setFriends(res.data);
+      } catch (err) {
+        console.error("Error fetching friends:", err);
+      }
     };
+    fetchFriends();
+  }, []);
 
-    const handleSend = (e) => {
-        e.preventDefault();
-        if (message.trim()) {
-            onSend(message);
-            setMessage('');
-        }
-    };
+  const filteredFriends = friends.filter((friend) =>
+    friend.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-            {/* Left bar */}
-            <div style={{ width: '60px', background: '#222', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0' }}>
-                <button style={{ background: 'none', border: 'none', color: '#fff', marginBottom: '16px', cursor: 'pointer', fontSize: '24px' }}>
-                    💬
-                </button>
-                {/* Additional icons can be added here */}
-            </div>
+    const handleStartChat = (friend) => {
+    
+    const conversationId =
+      currentUser.id < friend.id
+        ? `conv-${currentUser.id}-${friend.id}`
+        : `conv-${friend.id}-${currentUser.id}`;
 
-            {/* Message panel */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f0f0f0' }}>
-                {/* Messages display area (placeholder) */}
-                <div style={{ flex: 1, padding: '16px', overflowY: 'auto' }}>
-                    {/* Messages would be listed here */}
-                    <p style={{ color: '#888' }}>Start the conversation...</p>
-                </div>
+  
+    navigate(`/message?conversationId=${conversationId}&receiverId=${friend.id}`);
 
-                {/* Input area */}
-                <form onSubmit={handleSend} style={{ display: 'flex', padding: '12px', background: '#fff', borderTop: '1px solid #ccc' }}>
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={handleChange}
-                        placeholder="Type your message..."
-                        style={{ flex: 1, padding: '10px', fontSize: '16px', borderRadius: '4px', border: '1px solid #ccc', marginRight: '8px' }}
-                    />
-                    <button type="submit" style={{ padding: '10px 16px', fontSize: '16px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px' }}>
-                        Send
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
-}
+   
+    if (onClose) onClose();
+  };
+ 
+
+  return (
+    <div className="message-popup">
+      <div className="message-header">
+        <h4>New Message</h4>
+        <CloseIcon onClick={onClose} className="close-icon" />
+      </div>
+      <input
+        type="text"
+        placeholder="Search friends..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <ul className="friend-list">
+        {filteredFriends.map((friend) => (
+          <li key={friend.id} onClick={() => onStartChat(friend)}>
+            <img src={`/upload/${friend.profilePic}`} alt={friend.name} />
+            <span>{friend.name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 export default Message;
