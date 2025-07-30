@@ -7,6 +7,7 @@ const Friends = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [suggestedFriends, setSuggestedFriends] = useState([]);
   const [allFriends, setAllFriends] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
 
   const tabs = [
      { id: "suggestions", label: "Suggestions", icon: "fluent:person-call-20-filled" },
@@ -32,7 +33,7 @@ const Friends = () => {
  useEffect(() => {
     const fetchAllFriends  = async () => {
       try {
-        const res = await makeRequest.get("/friends/allFriends");
+        const res = await makeRequest.get("/friends/all");
         setAllFriends(res.data);
       } catch (err) {
         console.error("Failed to load friends", err);
@@ -59,6 +60,38 @@ const Friends = () => {
         console.error("Error unfriending user:", err);
       }
     };
+
+    const sendRequest = async (receiverId) => {
+  try {
+    await makeRequest.post("/friends/sendRequest", { receiverId });
+  } catch (err) {
+    console.error("Error sending friend request:", err.response?.data || err.message);
+  }
+};
+
+useEffect(() => {
+  const fetchRequests = async () => {
+    try {
+      const res = await makeRequest.get("/friends/requests");
+      setFriendRequests(res.data);
+    } catch (err) {
+      console.error("Error loading friend requests", err);
+    }
+  };
+  if (activeTab === "requests") {
+    fetchRequests();
+  }
+}, [activeTab]);
+
+const accept = async (senderId) => {
+  await makeRequest.post("/friends/acceptRequest", { senderId });
+  setFriendRequests(prev => prev.filter(r => r.id !== senderId));
+};
+
+const reject = async (senderId) => {
+  await makeRequest.post("/friends/rejectRequest", { senderId });
+  setFriendRequests(prev => prev.filter(r => r.id !== senderId));
+};
 
   return (
     <div className="friends-page">
@@ -87,16 +120,26 @@ const Friends = () => {
                 : ""}
         </h3>
 
-       <div className="card-list">
-        {(activeTab === "suggestions"|| activeTab === "home") &&
-        suggestedFriends.map((friend) => (
-        <div className="friend-card" key={friend.id}>
+      <div className="card-list">
+      {(activeTab === "suggestions" || activeTab === "home") &&
+      suggestedFriends.map((friend) => (
+      <div className="friend-card" key={friend.id}>
         <img src={`/upload/${friend.profilePic}`} alt={friend.name} />
         <h4>{friend.name}</h4>
-        <button className="add" onClick={() => addFriend(friend.id)}>Add friend</button>
-        <button className="remove">Remove</button>
+       
+        <button className="remove" onClick={() => sendRequest(friend.id)}>Send Request</button>
       </div>
-    ))}
+  ))}
+
+    {activeTab === "requests" &&
+      friendRequests.map((request) => (
+        <div className="friend-card" key={request.id}>
+        <img src={`/upload/${request.profilePic}`} alt={request.name} />
+        <h4>{request.name}</h4>
+        <button className="add" onClick={() => accept(request.id)}>Accept</button>
+        <button className="remove" onClick={() => reject(request.id)}>Reject</button>
+      </div>
+  ))}
 
     {activeTab === "allFriends" &&
     allFriends.map((friend) => (
