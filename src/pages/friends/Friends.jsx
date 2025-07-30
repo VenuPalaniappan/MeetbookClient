@@ -2,6 +2,7 @@ import "./friends.scss";
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { makeRequest } from "../../axios";
+import { Link } from "react-router-dom";
 
 const Friends = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -125,7 +126,9 @@ const reject = async (senderId) => {
       suggestedFriends.map((friend) => (
       <div className="friend-card" key={friend.id}>
         <img src={`/upload/${friend.profilePic}`} alt={friend.name} />
+        <Link to={`/profile/${friend.id}`} className="friend-name-link">
         <h4>{friend.name}</h4>
+        </Link>
        
         <button className="remove" onClick={() => sendRequest(friend.id)}>Send Request</button>
       </div>
@@ -145,7 +148,9 @@ const reject = async (senderId) => {
     allFriends.map((friend) => (
       <div className="friend-card" key={friend.id}>
         <img src={`/upload/${friend.profilePic}`} alt={friend.name} />
+         <Link to={`/profile/${friend.id}`} className="friend-name-link">
         <h4>{friend.name}</h4>
+        </Link>
         <button className="remove" onClick={() => handleUnfriend(friend.id)}>Unfriend</button>
       </div>
     ))}
