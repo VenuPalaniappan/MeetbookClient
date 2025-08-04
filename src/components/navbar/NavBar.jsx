@@ -6,6 +6,52 @@ import logo from "../../assets/logo.png";
 import { AuthContext } from "../../context/authContext";
 import Message from "../../pages/message/Message.jsx";
 import { useNavigate } from "react-router-dom";
+import { makeRequest } from "../../axios";
+
+
+
+const SearchBar = () => {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+
+  const handleSearch = async (e) => {
+    setQuery(e.target.value);
+    if (e.target.value.length >= 2) {
+      try {
+        const res = await makeRequest.get(`/users/search?query=${e.target.value}`);
+        setResults(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      setResults([]);
+    }
+  };
+
+  return (
+    <div className="search-bar">
+      <input
+        type="text"
+        placeholder="Search for friends or users..."
+        value={query}
+        onChange={handleSearch}
+      />
+      {results.length > 0 && (
+        <ul className="search-results">
+          {results.map((user) => (
+            <Link to={`/profile/${user.id}`} key={user.id} className="search-item" onClick={() => {setQuery("");setResults([]);}}>
+              <li>
+                <img src={`/upload/${user.profilePic}`} alt="" />
+                <span>{user.name}</span> <small>({user.relation})</small>
+              </li>
+            </Link>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 
 const Navbar = () => {
  
@@ -36,6 +82,7 @@ const Navbar = () => {
     };
 
     checkMessages();
+
     const interval = setInterval(checkMessages, 10000); // every 10 seconds
     return () => clearInterval(interval);
   }, [currentUser.id]);
@@ -45,6 +92,7 @@ const Navbar = () => {
         setHasNewMessages(false); // clear red dot
   };
 
+
   return (
      <>
     <div className="navbar">
@@ -52,13 +100,10 @@ const Navbar = () => {
         <Link to="/" style={{ textDecoration: "none" }}>
          <img src={logo} alt="Logo" className="logo" />
         </Link>
-        
-        
-        <div className="search">
-          <Icon icon="ic:baseline-search" className="icon" />
-          <input type="text" placeholder="Search..." />
-        </div>
+          <SearchBar /> 
       </div>
+
+
       <div className="right">
         <Link to="/" style={{ textDecoration: "none" }}>
          <Icon icon="fluent:home-32-filled" color="#6a1b9a" width="28" />
