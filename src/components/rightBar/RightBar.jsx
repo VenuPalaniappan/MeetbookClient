@@ -28,7 +28,7 @@ const RightBar = () => {
   const { data: suggestions = [] } = useQuery({
     queryKey: ["suggestions"],
     queryFn: () =>
-      makeRequest.get("/users/suggestions").then((res) => res.data),
+      makeRequest.get("/friends/suggestions").then((res) => res.data),
   });
 
   const { data: onlineFriends = [] } = useQuery({
@@ -43,6 +43,17 @@ const RightBar = () => {
       makeRequest.get("/activities").then((res) => res.data),
   });
 
+ const handleFollow = async (userId) => {
+  try {
+    await makeRequest.post("/friends/follow", { followedUserId: userId });
+    alert("Now following!");
+    
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data || "Failed to follow user");
+  }
+};
+
   return (
     <div className="rightBar">
       <div className="container">
@@ -56,7 +67,7 @@ const RightBar = () => {
                 <span>{user.name}</span>
               </div>
               <div className="buttons">
-                <button>Follow</button>
+                <button onClick={() => handleFollow(user.id)}>Follow</button>
                 <button>Dismiss</button>
               </div>
             </div>
