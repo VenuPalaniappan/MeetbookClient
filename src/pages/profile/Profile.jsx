@@ -16,6 +16,7 @@ const Profile = () => {
   const { currentUser } = useContext(AuthContext);
   const { userId: userIdParam } = useParams();
   const userId = parseInt(userIdParam);
+  const [requestSent, setRequestSent] = useState(false);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["user", userId],
@@ -52,6 +53,15 @@ const Profile = () => {
   const defaultCover = "/upload/default-cover.png";
   const defaultProfile = "/upload/default-profile.png";
 
+  const handleSendFriendRequest = async () => {
+  try {
+    await makeRequest.post("/friends/sendRequest", { receiverId: userId });
+    setRequestSent(true);
+  } catch (err) {
+    console.error("Error sending friend request:", err);
+  }
+};
+
   return (
     <div className="profile">
       <div className="images">
@@ -87,9 +97,15 @@ const Profile = () => {
             ) : userId === currentUser?.id ? (
               <button onClick={() => setOpenUpdate(true)}>Update</button>
             ) : (
+              <>
               <button onClick={handleFollow}>
                 {relationshipData?.includes(currentUser?.id) ? "Following" : "Follow"}
               </button>
+              {!requestSent && (
+                <button onClick={handleSendFriendRequest}>Add Friend</button>
+                  )}
+                  {requestSent && <button disabled>Request Sent</button>}
+                </>
             )}
           </div>
           <div className="right">
