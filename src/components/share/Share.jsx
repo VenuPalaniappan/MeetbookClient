@@ -115,7 +115,7 @@ const Share = () => {
         const errorMsg = { sender: "ai", text: "❌ Failed to get AI response." };
         setChatMessages((prev) => [...prev, errorMsg]);
       } finally {
-        setAiLoading(false);
+        setLoadingAI(false);
       }
     };
 
