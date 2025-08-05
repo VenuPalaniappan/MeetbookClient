@@ -2,7 +2,6 @@ import "./share.scss";
 import LocationIcon from "../../assets/map.png";
 import PhotoVideoIcon from "../../assets/img.png";
 import TagIcon from "../../assets/friend.png";
-
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -33,6 +32,13 @@ const Share = () => {
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [showPlaceDropdown, setShowPlaceDropdown] = useState(false);
   const [showFriendsInput, setShowFriendsInput] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState("");
+  const [showAiPopup, setShowAiPopup] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [showAiChat, setShowAiChat] = useState(false);
+  const [loadingAI, setLoadingAI] = useState(false);
+
 
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
@@ -57,6 +63,10 @@ const Share = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
+    if (!desc.trim()) {
+    alert("Post description cannot be empty.");
+    return;
+  }
     let imgUrl = "";
     if (file) imgUrl = await upload();
 
@@ -83,6 +93,32 @@ const Share = () => {
     setFriendInput("");
   };
 
+  
+
+    const handleAIChatSubmit = async () => {
+      if (!chatInput.trim()) return;
+
+      const userMsg = { sender: "user", text: chatInput };
+      setChatMessages((prev) => [...prev, userMsg]);
+      setLoadingAI(true);
+      setChatInput("");
+
+      try {
+        const res = await makeRequest.post("/ai/generate-post", {
+          prompt: chatInput,
+        });
+
+        const aiMsg = { sender: "ai", text: res.data.text || "No response" };
+        setChatMessages((prev) => [...prev, aiMsg]);
+      } catch (err) {
+        console.error("AI Error:", err);
+        const errorMsg = { sender: "ai", text: "❌ Failed to get AI response." };
+        setChatMessages((prev) => [...prev, errorMsg]);
+      } finally {
+        setAiLoading(false);
+      }
+    };
+
   return (
     <div className="share">
       <div className="container">
@@ -94,13 +130,77 @@ const Share = () => {
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
           />
+          <button
+              type="button"
+                className="ai-btn"
+                onClick={() => setShowAiChat(true)}
+              >
+                💬 Gemini Chat
+            </button>
         </div>
+
+        {showAiPopup && (
+          <div className="ai-suggestion-popup">
+            <div className="popup-header">
+              <strong>💡 AI Suggestion</strong>
+              <span className="close-btn" onClick={() => setShowAiPopup(false)}>✖</span>
+            </div>
+            <pre className="suggestion-text">{aiSuggestion}</pre>
+            <div className="popup-actions">
+              <button
+                className="copy-btn"
+                onClick={() => {
+                  navigator.clipboard.writeText(aiSuggestion);
+                  alert("Copied to clipboard!");
+                }}
+              >
+                📋 Copy
+              </button>
+              <button
+                className="use-btn"
+                onClick={() => {
+                  setDesc(aiSuggestion);
+                  setShowAiPopup(false);
+                }}
+              >
+                ✅ Use this suggestion
+              </button>
+            </div>
+          </div>  
+          )}
+        
+           {showAiChat && (
+          <div className="ai-chat-popup">
+            <div className="chat-header">
+              <span>💡 Gemini AI</span>
+              <span className="close-btn" onClick={() => setShowAiChat(false)}>✖</span>
+            </div>
+            <div className="chat-body">
+              {chatMessages.map((msg, index) => (
+                <div key={index} className={`msg ${msg.sender}`}>
+                  {msg.text}
+                </div>
+              ))}
+              {loadingAI && <div className="msg ai">Thinking...</div>}
+            </div>
+            <div className="chat-input">
+              <input
+                type="text"
+                placeholder="Ask something..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAIChatSubmit()}
+              />
+              <button onClick={handleAIChatSubmit}>Send</button>
+            </div>
+          </div>
+        )}
 
         {file && (
           <img className="preview-img" src={URL.createObjectURL(file)} alt="preview" />
         )}
 
-        {/* Location Preview */}
+       
         {place && (
           <div className="location-preview">
             📍 {place}
@@ -157,7 +257,6 @@ const Share = () => {
             />
           </div>
 
-      
           {showPlaceDropdown && (
             <div className="location-modal open">
               <input
