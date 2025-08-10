@@ -1,0 +1,65 @@
+.tg {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+  font: inherit;
+  color: #fff; /* text white */
+  -webkit-tap-highlight-color: transparent;
+
+  /* Avoid text selection on Safari/iOS etc. */
+  &, * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  &.tg--disabled { opacity: .55; cursor: not-allowed; }
+
+  /* keyboard focus ring */
+  &:focus-visible .tg__track {
+    outline: 2px solid #8ab4ff;
+    outline-offset: 2px;
+  }
+
+  .tg__track {
+    position: relative;
+    width: 50px;
+    height: 28px;
+    border-radius: 999px;
+    transition: background .18s ease, box-shadow .18s ease;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+  }
+
+  .tg__thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    background: #fff; /* stays white for contrast */
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    transition: transform .18s ease;
+  }
+
+  .tg__icon {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    font-size: 12px; font-weight: 700; color: #fff; /* white icons */
+    pointer-events: none;
+    &--on { left: 8px; }
+    &--off { right: 8px; }
+  }
+
+  .tg__text { min-width: 28px; font-weight: 600; color: #fff; } /* white label */
+
+  /* ON = Blue, OFF = Red */
+  &.tg--on  .tg__track { background: #1e88e5; } /* blue */
+  &.tg--off .tg__track { background: #d32f2f; } /* red  */
+
+  &.tg--on .tg__thumb { transform: translateX(22px); }
+}

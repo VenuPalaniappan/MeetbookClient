@@ -20,6 +20,8 @@ import GalleryLayout from "./layouts/GalleryLayout";
 import PostPage from "./pages/post/PostPages";
 import Message from "./pages/message/Message";
 import MessageLayout from "./layouts/MessageLayout";
+import Setting from "./pages/setting/Setting";
+import AudienceSettings from "./pages/settings/AudienceSettings";
 
 import "./app.scss";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -74,7 +76,14 @@ function App() {
         {
         path: "/post/:postId",
         element: <PostPage />,
-      }
+      },
+       { path: "/setting", 
+        element: <Setting /> 
+      },
+
+      { path: "/settings/audience", 
+        element: <AudienceSettings/> 
+      },
       ],
     },
     {

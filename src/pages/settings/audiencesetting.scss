@@ -1,0 +1,33 @@
+
+.audience-page {
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+  padding: 24px 20px;
+}
+
+.aud-header {
+  margin-bottom: 12px;
+  h1 { margin: 0 0 6px; font-weight: 800; }
+  p  { margin: 0 0 8px; color: #c9c9c9; }
+}
+
+.link-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: #8ab4ff; font-weight: 600; margin-bottom: 8px;
+}
+
+.muted { color: #c9c9c9; margin-top: 10px; }
+
+.aud-list { display: flex; flex-direction: column; gap: 10px; }
+
+.aud-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #111; border: 1px solid #222; border-radius: 12px;
+  padding: 14px;
+}
+
+.aud-left { display: flex; flex-direction: column; gap: 2px; }
+.aud-title { font-weight: 700; color: #fff; }
+.aud-desc  { font-size: 13px; color: #c9c9c9; }
+

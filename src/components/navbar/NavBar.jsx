@@ -129,8 +129,10 @@ const Navbar = () => {
               <Link to={`/profile/${currentUser.id}`} className="see-all">Update Profile</Link>
               <hr />
              
-              <Link to={`/setting/${currentUser.id}`} className="see-all">Setting & Privacy</Link>
+              <Link to="/setting" className="see-all">Setting & Privacy</Link>
               <hr />
+              /*<Link to={`/setting/${currentUser.id}`} className="see-all">Setting & Privacy</Link>  <hr /> */
+             
 
               <Link to={`/help/${currentUser.id}`} className="see-all">Help & support</Link>
               <hr />
