@@ -1,6 +1,6 @@
 
-import { useContext } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useContext,useState,useEffect } from "react";
+import { useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { makeRequest } from "../../axios";
@@ -19,14 +19,54 @@ const OPTIONS = [
 const OPTIONS1 = [
   { value: "email",    label: "Email address", desc: "Show your email" },
   { value: "birthday", label: "Birthday",      desc: "Show your birthday" },
+  { value: "married", label: "Married",        desc: "Show your marriage status" },
+  { value: "city", label: "City",      desc: "Show your current city" },
+ 
 ];
 
 
 const PROFILE_FIELD_RULES = {
   email:    { on: "public",  off: "only_me", settingKey: "emailVisibility" },
   birthday: { on: "friends", off: "only_me", settingKey: "birthdayVisibility" },
+  married:  { on: "public",  off: "only_me", settingKey: "marriedVisibility" },
+  city:     { on: "public",  off: "only_me", settingKey: "cityVisibility" },  
 };
 
+function AudiencePickerModal({ open, value, onClose, onDone }) {
+  const [picked, setPicked] = useState(value);
+  useEffect(() => { if (open) setPicked(value); }, [open, value]);
+  if (!open) return null;
+
+   return (
+    <div className="aud-modal">
+      <div className="aud-dialog">
+        <div className="aud-dialog-header">
+          <div className="aud-dialog-title">Select audience</div>
+          <button className="aud-close" onClick={onClose}>✕</button>
+        </div>
+
+        <div className="aud-dialog-body">
+          {OPTIONS.map((opt) => (
+            <div key={opt.value} className="aud-toggle-row">
+              <div className="aud-radio-text">
+                <div className="aud-radio-title">{opt.label}</div>
+                <div className="aud-radio-desc">{opt.desc}</div>
+              </div>
+              {/* Exclusive: turning one ON selects it; turning OFF does nothing */}
+              <Toggle checked={picked === opt.value} onChange={(next) => { if (next) setPicked(opt.value); }} />
+            </div>
+          ))}
+        </div>
+
+        <div className="aud-dialog-actions">
+          <button className="link-btn" onClick={onClose}>Cancel</button>
+          <button className="btn-primary" onClick={() => onDone(picked)}>Done</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+  
 export default function AudienceSettings() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -41,11 +81,30 @@ export default function AudienceSettings() {
   const current = data?.defaultAudience ?? "friends";
   const emailVisibility = data?.emailVisibility ?? "only_me";
   const birthdayVisibility = data?.birthdayVisibility ?? "only_me";
+  const marriedVisibility = data?.marriedVisibility ?? "only_me";
+  const cityVisibility = data?.cityVisibility ?? "only_me";
+  const friendsListVisibility = data?.friendsListVisibility ?? "friends";
+  const followingVisibility   = data?.followingVisibility   ?? "friends";
+
+  const visibilityMap = {
+    email:    emailVisibility,
+    birthday: birthdayVisibility,
+    married:  marriedVisibility,
+    city:     cityVisibility,
+  };
 
   const updateSetting = useMutation({
     mutationFn: (payload) => makeRequest.put("/settings", payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["settings", "audience"] }),
   });
+
+  const [picker, setPicker] = useState({ open: false, key: null, value: null });
+  const openPicker  = (key, value) => setPicker({ open: true, key, value });
+  const closePicker = () => setPicker({ open: false, key: null, value: null });
+  const savePicker  = (val) => {
+    updateSetting.mutate({ settingKey: picker.key, settingValue: val });
+    closePicker();
+  };
 
   return (
     <div className="audience-page">
@@ -95,8 +154,8 @@ export default function AudienceSettings() {
           <div className="aud-list">
             {OPTIONS1.map((item) => {
               const rule = PROFILE_FIELD_RULES[item.value];
-              const currentValue =
-                item.value === "email" ? emailVisibility : birthdayVisibility;
+              if (!rule) return null;
+              const currentValue = visibilityMap[item.value];
               const isOn = currentValue === rule.on;
 
               return (
@@ -120,6 +179,42 @@ export default function AudienceSettings() {
               );
             })}
           </div>
+      <div className="aud-subtitle">Friends and following</div>
+          <div className="aud-list">
+            <button
+              className="aud-row aud-click"
+              onClick={() => openPicker("friendsListVisibility", friendsListVisibility)}
+            >
+              <div className="aud-left">
+                <div className="aud-title">Who can see your friends list?</div>
+                <div className="aud-desc">
+                  {friendsListVisibility[0].toUpperCase() + friendsListVisibility.slice(1)}
+                </div>
+              </div>
+              <span className="aud-chevron">›</span>
+            </button>
+
+            <button
+              className="aud-row aud-click"
+              onClick={() => openPicker("followingVisibility", followingVisibility)}
+            >
+              <div className="aud-left">
+                <div className="aud-title">Who can see the people, Pages and lists you follow?</div>
+                <div className="aud-desc">
+                  {followingVisibility[0].toUpperCase() + followingVisibility.slice(1)}
+                </div>
+              </div>
+              <span className="aud-chevron">›</span>
+            </button>
+          </div>
+
+          {/* Minimal modal — same page */}
+          <AudiencePickerModal
+            open={picker.open}
+            value={picker.value}
+            onClose={closePicker}
+            onDone={savePicker}
+          />
         </>
       )}
 
