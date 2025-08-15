@@ -55,7 +55,7 @@ const SearchBar = () => {
 
 const Navbar = () => {
  
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,logout } = useContext(AuthContext);
   const [openMenu, setOpenMenu] = useState(false);
   const [showMessagePopup, setShowMessagePopup] = useState(false);
   const [hasNewMessages, setHasNewMessages] = useState(false);
@@ -88,8 +88,14 @@ const Navbar = () => {
   }, [currentUser.id]);
 
       const handleMessageIconClick = () => {
-        setShowMessagePopup((prev) => !prev); // toggle popup
-        setHasNewMessages(false); // clear red dot
+        setShowMessagePopup((prev) => !prev); 
+        setHasNewMessages(false); 
+  };
+
+  const handleLogout = async () => {
+    await logout();             
+    setOpenMenu(false);         
+    navigate("/login", { replace: true }); 
   };
 
 
@@ -135,7 +141,9 @@ const Navbar = () => {
           
            
             
-              <div className="item logout">Log out</div>
+              <button type="button" className="item logout" onClick={handleLogout}>
+                  Log out
+                </button>
             </div>
           )}
         </div>

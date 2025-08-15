@@ -223,12 +223,13 @@
 
         .logout {
           padding: 10px 15px;
-          color: red;
+          color: white;
           font-weight: bold;
           cursor: pointer;
+          color: black;
 
           &:hover {
-            background-color: #f0f2f5;
+            background-color: red;
           }
 
           .logo {
