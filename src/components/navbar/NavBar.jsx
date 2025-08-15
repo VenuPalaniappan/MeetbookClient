@@ -115,14 +115,14 @@ const Navbar = () => {
          <Icon icon="fluent:home-32-filled" color="#6a1b9a" width="28" />
         </Link>
 
-        <Icon icon="fluent:grid-28-filled" color="#388e3c" width="28" />
+        
 
         <div className="message-icon-wrapper" onClick={handleMessageIconClick}>
             <Icon icon="material-symbols:mail-outline" color="#ff7043" width="28" />
             {hasNewMessages && <span className="red-dot" />}
         </div>
 
-        <Icon icon="material-symbols:notifications-active-rounded" color="#0288d1" width="28" />
+       
 
         <div className="profile-wrapper" onClick={handleMenuToggle}>
         <img src={"/upload/" + currentUser.profilePic} alt="" />

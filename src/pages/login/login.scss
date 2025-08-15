@@ -1,6 +1,17 @@
+$mb-purple: #6947A7;
+$mb-blue:   #1279DE;
+$mb-green:  #59A64C;
+$mb-orange: #F8682F;
+
+$mb-bg-purple: #E8E3F1;
+$mb-bg-blue:   #DBEAFA;
+$mb-bg-green:  #E6F1E4;
+$mb-bg-orange: #FDE8DF;
+
+
 .login {
   height: 100vh;
-  background: linear-gradient(135deg, #d0f0fd, #e0e7ff);
+  background: linear-gradient(135deg, $mb-bg-purple, $mb-bg-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,8 +58,8 @@
         width: 50%;
         padding: 10px;
         border: none;
-        background-color: white;
-        color: #333;
+        background-color: #59A64C;
+        color: white;
         font-weight: bold;
         cursor: pointer;
         border-radius: 5px;
@@ -92,7 +103,7 @@
           width: 50%;
           padding: 10px;
           border: none;
-          background-color: #6f6af8;
+          background-color:#6947A7;
           color: white;
           font-weight: bold;
           cursor: pointer;
