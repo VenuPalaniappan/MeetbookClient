@@ -131,17 +131,9 @@ const Navbar = () => {
              
               <Link to="/setting" className="see-all">Setting & Privacy</Link>
               <hr />
-              /*<Link to={`/setting/${currentUser.id}`} className="see-all">Setting & Privacy</Link>  <hr /> */
-             
-
-              <Link to={`/help/${currentUser.id}`} className="see-all">Help & support</Link>
-              <hr />
-
-              <Link to={`/display/${currentUser.id}`} className="see-all">Display & accessibility</Link>
-              <hr />
-
-              <Link to={`/feedback/${currentUser.id}`} className="see-all">Give feedback</Link>
-              <hr />
+              
+          
+           
             
               <div className="item logout">Log out</div>
             </div>

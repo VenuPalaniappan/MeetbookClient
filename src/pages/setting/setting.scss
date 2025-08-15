@@ -12,7 +12,7 @@
 .privacy-checkup {
   min-height: 100vh;
   padding: 32px 20px 60px;
-  background: #000;
+  background: white;
   color: #fff;
 
   .pc-header {
@@ -20,7 +20,7 @@
     margin: 0 auto 20px;
 
     h1 { font-size: 32px; font-weight: 800; margin: 0 0 8px; }
-    p  { color: #c9c9c9; margin: 0; line-height: 1.5; font-size: 15px; }
+    p  { color: black; margin: 0; line-height: 1.5; font-size: 15px; }
   }
 
   .pc-grid {
@@ -37,7 +37,7 @@
   .pc-card {
     display: flex;
     flex-direction: column;
-    background: #111;
+    background: white;
     border: 1px solid #222;
     border-radius: 14px;
     overflow: hidden;

@@ -10,27 +10,7 @@ const sections = [
     icon: "mdi:account-multiple",
     bg: "var(--pc-orange)",
   },
-  {
-    id: "discoverability",
-    title: "How People Can Find You on MeetBook",
-    to: "/settings/discoverability",
-    icon: "mdi:magnify",
-    bg: "var(--pc-purple)",
-  },
-  {
-    id: "data",
-    title: "Your Data Settings on MeetBook",
-    to: "/settings/data",
-    icon: "mdi:database-settings",
-    bg: "var(--pc-green)",
-  },
-  {
-    id: "security",
-    title: "How to Keep Your Account Secure",
-    to: "/settings/security",
-    icon: "mdi:lock-check",
-    bg: "var(--pc-blue)",
-  },
+  
   
 ];
 

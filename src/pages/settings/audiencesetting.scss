@@ -1,7 +1,7 @@
 
 .audience-page {
-  background: #000;
-  color: #fff;
+  background: white;
+  color: hsl(0, 0%, 5%);
   min-height: 100vh;
   padding: 24px 20px;
 }
@@ -9,27 +9,27 @@
 .aud-header {
   margin-bottom: 12px;
   h1 { margin: 0 0 6px; font-weight: 800; }
-  p  { margin: 0 0 8px; color: #c9c9c9; }
+  p  { margin: 0 0 8px; color: black; }
 }
 
 .link-btn {
   background: none; border: none; padding: 0; cursor: pointer;
-  color: #8ab4ff; font-weight: 600; margin-bottom: 8px;
+  color: hsl(234, 83%, 50%); font-weight: 600; margin-bottom: 8px;
 }
 
-.muted { color: #c9c9c9; margin-top: 10px; }
+.muted { color: hsl(0, 2%, 8%); margin-top: 10px; }
 
 .aud-list { display: flex; flex-direction: column; gap: 10px; }
 
 .aud-row {
   display: flex; align-items: center; justify-content: space-between;
-  background: #111; border: 1px solid #222; border-radius: 12px;
+  background: white; border: 1px solid #222; border-radius: 12px;
   padding: 14px;
 }
 
 .aud-left { display: flex; flex-direction: column; gap: 2px; }
-.aud-title { font-weight: 700; color: #fff; }
-.aud-desc  { font-size: 13px; color: #c9c9c9; }
+.aud-title { font-weight: 700; color: hsl(0, 4%, 5%); }
+.aud-desc  { font-size: 13px; color: #0e0d0d; }
 
 .aud-click { justify-content: space-between; text-align: left; }
 .aud-chevron { font-size: 22px; color: #b8c2d1; }
