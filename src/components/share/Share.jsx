@@ -2,32 +2,92 @@ import "./share.scss";
 import LocationIcon from "../../assets/map.png";
 import PhotoVideoIcon from "../../assets/img.png";
 import TagIcon from "../../assets/friend.png";
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect,useMemo,useRef} from "react";
 import { AuthContext } from "../../context/authContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient,useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 
-const dummyLocations = [
-  "Singapore, Singapore",
-  "Suntec Singapore Convention & Exhibition Centre",
-  "Sentosa Island, Singapore",
-  "Broth & Beyond Hot Pot",
-  "Esplanade MRT Station",
-  "PARKROYAL COLLECTION Marina Bay, Singapore",
-];
+function useGoogleMapsPlaces() {
+  const [ready, setReady] = useState(false);
 
-const dummyFriends = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Mike Johnson" },
-  { id: 4, name: "Amanda Tan" },
-  { id: 5, name: "Satiah Kumar" },
-];
+  useEffect(() => {
+    const hasPlaces =
+      typeof window !== "undefined" &&
+      window.google &&
+      window.google.maps &&
+      window.google.maps.places;
+
+    if (hasPlaces) {
+      setReady(true);
+      return;
+    }
+
+    const id = "gmaps-js";
+    const existing = document.getElementById(id);
+
+    const onLoaded = () => {
+      const ok =
+        window.google && window.google.maps && window.google.maps.places;
+      if (!ok) {
+        console.error(
+          "Google Maps JS loaded but Places not available. Enable Places API and check key restrictions."
+        );
+        return;
+      }
+      setReady(true);
+    };
+
+    if (existing) {
+      if (existing.getAttribute("data-loaded") === "true") {
+        onLoaded();
+      } else {
+        existing.addEventListener("load", onLoaded, { once: true });
+      }
+      return;
+    }
+
+    const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    if (!key) {
+      console.warn("VITE_GOOGLE_MAPS_API_KEY is missing in .env (Vite).");
+      return;
+    }
+
+    const s = document.createElement("script");
+    s.id = id;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+      key
+    )}&libraries=places&v=weekly`;
+    s.async = true;
+    s.defer = true;
+    s.setAttribute("data-loaded", "false");
+    s.addEventListener(
+      "load",
+      () => {
+        s.setAttribute("data-loaded", "true");
+        onLoaded();
+      },
+      { once: true }
+    );
+    s.addEventListener("error", () =>
+      console.error("Failed to load Google Maps JavaScript API script")
+    );
+    document.head.appendChild(s);
+  }, []);
+
+  return ready;
+}
 
 const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
-  const [place, setPlace] = useState("");
+
+  const [placeInput, setPlaceInput] = useState("");
+  const [placeChosenText, setPlaceChosenText] = useState("");
+  const [placeId, setPlaceId] = useState(null);
+  const [placeLatLng, setPlaceLatLng] = useState(null);
+  const [placePredictions, setPlacePredictions] = useState([]);
+  const [isPredicting, setIsPredicting] = useState(false);
+  
   const [friendInput, setFriendInput] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [showPlaceDropdown, setShowPlaceDropdown] = useState(false);
@@ -42,6 +102,112 @@ const Share = () => {
 
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
+
+  const {
+    data: friendsData = [],
+    isLoading: friendsLoading,
+    isError: friendsError,
+  } = useQuery({
+    queryKey: ["friendsForTag"],
+    queryFn: () => makeRequest.get("/friends/all").then((res) => res.data),
+    enabled: showFriendsInput, // fetch lazily on open
+    staleTime: 1000 * 60 * 5,
+  });
+
+ 
+  const placesReady = useGoogleMapsPlaces();
+  const sessionTokenRef = useRef(null);
+
+
+  useEffect(() => {
+    if (!placesReady) return;
+
+    sessionTokenRef.current =
+      new window.google.maps.places.AutocompleteSessionToken();
+   
+  }, [placesReady]);
+
+ 
+  const sgCenter = useMemo(
+    () => ({ lat: 1.3521, lng: 103.8198 }),
+    []
+  );
+
+  
+  useEffect(() => {
+    if (!placesReady || !showPlaceDropdown) return;
+    if (!placeInput || placeInput.trim().length < 2) {
+      setPlacePredictions([]);
+      return;
+    }
+
+    setIsPredicting(true);
+   const t = setTimeout(async () => {
+    const req = {
+      input: placeInput,
+      // Use restriction/bias (not legacy location/radius)
+      locationRestriction: {
+        west: 103.55, south: 1.15, east: 104.15, north: 1.50, // SG box; adjust if desired
+      },
+      origin: { lat: 1.3521, lng: 103.8198 },
+      region: "sg",
+      language: "en",
+      sessionToken: sessionTokenRef.current,
+    };
+
+    try {
+      const { suggestions } =
+        await window.google.maps.places.AutocompleteSuggestion
+          .fetchAutocompleteSuggestions(req);
+
+      setPlacePredictions(Array.isArray(suggestions) ? suggestions : []);
+    } catch (e) {
+      console.error("Autocomplete error:", e);
+      setPlacePredictions([]);
+    } finally {
+      setIsPredicting(false);
+    }
+  }, 250);
+
+      return () => clearTimeout(t);
+      }, [placeInput, placesReady, showPlaceDropdown]);
+
+  const handlePickPrediction = async (suggestion) => {
+  const pred = suggestion.placePrediction;
+
+  setShowPlaceDropdown(false);
+
+  try {
+    const place = pred.toPlace();
+    await place.fetchFields({
+      fields: ["id", "displayName", "formattedAddress", "location"],
+    });
+
+    const label =
+      place.formattedAddress ||
+      (place.displayName && place.displayName.text) ||
+      (pred.text && pred.text.toString && pred.text.toString()) ||
+      "";
+
+    setPlaceId(place.id || null);
+    setPlaceChosenText(label);
+    setPlaceInput(label);
+
+    const loc = place.location;
+    setPlaceLatLng(loc ? { lat: loc.lat(), lng: loc.lng() } : null);
+  } catch (e) {
+    console.error("Place details error:", e);
+  }
+};
+
+  const clearPickedPlace = () => {
+    setPlaceId(null);
+    setPlaceLatLng(null);
+    setPlaceChosenText("");
+    setPlaceInput("");
+  };
+
+
 
   const upload = async () => {
     try {
@@ -73,13 +239,16 @@ const Share = () => {
     mutation.mutate({
       desc,
       img: imgUrl,
-      place: place.trim() || null,
+      place: placeChosenText || null,
+      placeId: placeId || null,
+      placeLat: placeLatLng?.lat ?? null,
+      placeLng: placeLatLng?.lng ?? null,
       friends: selectedFriends.join(", ") || null,
     });
 
     setDesc("");
     setFile(null);
-    setPlace("");
+    clearPickedPlace();
     setFriendInput("");
     setSelectedFriends([]);
     setShowPlaceDropdown(false);
@@ -118,6 +287,13 @@ const Share = () => {
         setLoadingAI(false);
       }
     };
+
+    const filteredFriends = (friendsData || []).filter((f) =>
+    (f.name || "")
+      .toString()
+      .toLowerCase()
+      .includes(friendInput.trim().toLowerCase())
+  );
 
   return (
     <div className="share">
@@ -201,14 +377,12 @@ const Share = () => {
         )}
 
        
-        {place && (
-          <div className="location-preview">
-            📍 {place}
-            <span className="clear-btn" onClick={() => setPlace("")}>
-              ❌
-            </span>
-          </div>
-        )}
+        {placeChosenText && (
+           <div className="location-preview">
+             📍 {placeChosenText}
+            <span className="clear-btn" onClick={clearPickedPlace}>❌</span>
+           </div>
+         )}
 
       
         {selectedFriends.length > 0 && (
@@ -259,31 +433,54 @@ const Share = () => {
 
           {showPlaceDropdown && (
             <div className="location-modal open">
+              {!placesReady && (
+              <div className="suggestion-item">Loading Google Places…</div>
+            )}
+
               <input
                 type="text"
                 className="location-input"
-                placeholder="Search location"
-                value={place}
-                onChange={(e) => setPlace(e.target.value)}
+                placeholder="Search a place or address"
+                value={placeInput}
+                onChange={(e) => setPlaceInput(e.target.value)}
+                disabled={!placesReady}
               />
-              <div className="location-suggestions">
-                {dummyLocations
-                  .filter((loc) => loc.toLowerCase().includes(place.toLowerCase()))
-                  .map((loc) => (
-                    <div
-                      key={loc}
-                      className="suggestion-item"
-                      onClick={() => {
-                        setPlace(loc);
-                        setShowPlaceDropdown(false);
-                      }}
-                    >
-                      📍 {loc}
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
+
+                <div className="location-suggestions">
+                  {placesReady && isPredicting && (
+                    <div className="suggestion-item">Searching…</div>
+                  )}
+
+            {placesReady && !isPredicting && placePredictions.map((sug, i) => {
+            // New API object shape
+            const pred = sug.placePrediction;
+            const main =
+              pred?.text?.toString?.() ||
+              pred?.structuredFormat?.mainText?.text ||
+              "";
+            const secondary = pred?.structuredFormat?.secondaryText?.text || "";
+
+                return (
+                  <div
+                    key={pred?.id || i}
+                    className="suggestion-item"
+                    onClick={() => handlePickPrediction(sug)}
+                  >
+                    📍 <strong>{main}</strong>
+                    {secondary ? ` — ${secondary}` : ""}
+                  </div>
+                );
+              })}
+
+              {placesReady &&
+                !isPredicting &&
+                placeInput.length >= 2 &&
+                placePredictions.length === 0 && (
+                  <div className="suggestion-item">No results</div>
+              )}
+                  </div> 
+              </div>   
+            )}
 
           {showFriendsInput && (
             <div className="friends-modal">
@@ -295,18 +492,44 @@ const Share = () => {
                 onChange={(e) => setFriendInput(e.target.value)}
               />
               <div className="friend-suggestions">
-                {dummyFriends
-                  .filter((f) =>
-                    f.name.toLowerCase().includes(friendInput.toLowerCase())
-                  )
-                  .map((friend) => (
-                    <div
-                      key={friend.id + "-" + friend.name}
-                      className="suggestion-item"
-                      onClick={() => handleSelectFriend(friend.name)}
-                    >
-                      👤 {friend.name}
-                    </div>
+                {friendsLoading && (
+                  <div className="suggestion-item">Loading friends…</div>
+                )}
+                {friendsError && (
+                  <div className="suggestion-item">
+                    Failed to load friends. Try again.
+                  </div>
+                )}
+                {!friendsLoading &&
+                  !friendsError &&
+                  (filteredFriends.length ? (
+                    filteredFriends.map((friend) => (
+                      <div
+                        key={friend.id}
+                        className="suggestion-item"
+                        onClick={() => handleSelectFriend(friend.name)}
+                      >
+                        {friend.profilePic ? (
+                          <img
+                            src={`/upload/${friend.profilePic}`}
+                            alt={friend.name}
+                            className="friend-avatar"
+                            style={{
+                              width: 24,
+                              height: 24,
+                              borderRadius: "50%",
+                              marginRight: 8,
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <span style={{ marginRight: 8 }}>👤</span>
+                        )}
+                        {friend.name}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="suggestion-item">No matches</div>
                   ))}
               </div>
             </div>

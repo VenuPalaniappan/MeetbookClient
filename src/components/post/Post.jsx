@@ -87,32 +87,42 @@ const Post = ({ post }) => {
               <img src={"/upload/" + post.img} alt="" />
             </div>
           )}
-
-          {post.place && (
-            <iframe
-              title="map"
-              width="100%"
-              height="250"
-              style={{ borderRadius: "10px", marginTop: "15px", border: "0" }}
-              loading="lazy"
-              allowFullScreen
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAWSbf4zi5KI7t5FhcvtvN6XZ_zC-Snu3A&q=${encodeURIComponent(post.place)}`}
-            ></iframe>
-          )}
-        </div>
-       
-        {post.friends && (
-            <div className="friends-tagged" style={{ marginTop: "10px", fontWeight: 500 }}>
-              👥 Tagged:{" "}
-              {post.friends
-                .split(",")
-                .map((friend, i) => (
-                  <span key={i} style={{ marginRight: "8px", color: "#4267B2" }}>
-                    {friend.trim()}
-                  </span>
-                ))}
+          </div>
+          
+         {(post.friends || post.place) && (
+            <div className="meta-row">
+              {post.friends && (
+                <div className="meta-item friends">
+                  👥 Tagged:&nbsp;
+                  {post.friends.split(",").map((friend, i) => (
+                    <span key={i} className="tag">{friend.trim()}</span>
+                  ))}
+                </div>
+              )}
+              {post.place && (
+                <div className="meta-item location">
+                  <span className="pin">📍</span>
+                  <a
+                    href={
+                      post.placeLat != null && post.placeLng != null
+                        ? `https://www.google.com/maps/search/?api=1&query=${post.placeLat},${post.placeLng}${
+                            post.placeId ? `&query_place_id=${post.placeId}` : ""
+                          }`
+                        : post.placeId
+                        ? `https://www.google.com/maps/search/?api=1&query_place_id=${post.placeId}`
+                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.place)}`
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open in Google Maps"
+                  >
+                    {post.place}
+                  </a>
+                </div>
+              )}
             </div>
           )}
+
 
         <div className="info">
           <div className="item">

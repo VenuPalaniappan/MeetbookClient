@@ -1,0 +1,12 @@
+# env files anywhere in the repo
+**/.env
+**/.env.*
+# keep sample files if you use them
+!**/.env.example
+
+# usual ignores
+node_modules/
+dist/
+.vite/
+.vscode/
+.DS_Store
