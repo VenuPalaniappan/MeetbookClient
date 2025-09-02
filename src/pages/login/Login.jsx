@@ -1,4 +1,4 @@
-// src/pages/Login.jsx
+
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
@@ -14,7 +14,7 @@ const Login = () => {
   const [err, setErr] = useState(null);
 
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login ,setCurrentUser  } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,7 +44,9 @@ const Login = () => {
 
       if (!res.ok) throw new Error("Google login failed");
 
-      navigate("/");
+       const user = await res.json();     
+      setCurrentUser(user);              
+      navigate("/");                   
     } catch (error) {
       console.error(error);
       setErr("Google login failed");

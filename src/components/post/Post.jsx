@@ -17,6 +17,9 @@ import ShareModal from "../shareModal/shareModal";
 const Post = ({ post }) => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editDesc, setEditDesc] = useState(post.desc || "");
+  const [editFile, setEditFile] = useState(null);
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -44,6 +47,23 @@ const Post = ({ post }) => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (payload) => makeRequest.put(`/posts/${post.id}`, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      setIsEditOpen(false);
+      setMenuOpen(false);
+    },
+  });
+
+  const upload = async (file) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const { data } = await makeRequest.post("/upload", fd);
+    return data; 
+  };
+
+
    const handleShare = () => {
     const postUrl= `${window.location.origin}/post/${post.id}`;
    
@@ -58,7 +78,21 @@ const Post = ({ post }) => {
     deleteMutation.mutate();
   };
 
- 
+  const handleSaveEdit = async () => {
+    try {
+      let newImg = null;
+      if (editFile) {
+        newImg = await upload(editFile);
+      }
+      await updateMutation.mutateAsync({
+        desc: editDesc,
+        ...(newImg ? { img: newImg } : {}), 
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Failed to update post");
+    }
+  };
 
   return (
     <div className="post">
@@ -75,9 +109,21 @@ const Post = ({ post }) => {
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
           {menuOpen && post.userId === currentUser.id && (
-            <button onClick={handleDelete}>Delete</button>
+            <div className="menu">
+              <button
+                onClick={() => {
+                  setEditDesc(post.desc || "");
+                  setEditFile(null);
+                  setIsEditOpen(true);   // <-- open the modal you already built
+                  setMenuOpen(false);
+                }}
+              >
+                Edit
+              </button>
+              <button className="danger" onClick={handleDelete}>Delete</button>
+            </div>
           )}
-        </div>
+           </div>
 
         <div className="content">
           {post.desc && <p className="description">{post.desc}</p>}
@@ -160,10 +206,39 @@ const Post = ({ post }) => {
         post={post}
       >
         <Comments postId={post.id} />
+        </CommentModal>
+        <CommentModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} post={post}>
+        <div style={{ padding: 8, minWidth: 320 }}>
+          <h3 style={{ marginTop: 0 }}>Edit Post</h3>
+          <textarea
+            value={editDesc}
+            onChange={(e) => setEditDesc(e.target.value)}
+            placeholder="Update your text…"
+            style={{ width: "100%", minHeight: 80, marginBottom: 8 }}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setEditFile(e.target.files?.[0] || null)}
+            style={{ marginBottom: 12 }}
+          />
+          {editFile && (
+            <div style={{ marginBottom: 12 }}>
+              <img
+                src={URL.createObjectURL(editFile)}
+                alt="preview"
+                style={{ maxWidth: "100%", borderRadius: 8 }}
+              />
+            </div>
+          )}
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+            <button onClick={() => setIsEditOpen(false)}>Cancel</button>
+            <button onClick={handleSaveEdit}>Save</button>
+          </div>
+        </div>
       </CommentModal>
     </div>
   );
-
 };
 
 export default Post;

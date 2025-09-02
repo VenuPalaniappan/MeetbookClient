@@ -1,8 +1,9 @@
-// src/pages/Register.jsx
+import { useContext } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./register.scss";
 import axios from "axios";
+import { AuthContext } from "../../context/authContext";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -13,6 +14,7 @@ const Register = () => {
   });
   const [err, setErr] = useState(null);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);   
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -20,9 +22,25 @@ const Register = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
+
+    if (!inputs.password || inputs.password.length < 8) {
+    setErr("Password must be at least 8 characters long.");
+    return;
+  }
+
     try {
-      await axios.post("http://localhost:8800/api/auth/register", inputs);
-      navigate("/login");
+     
+      await axios.post(
+        "http://localhost:8800/api/auth/register",
+        inputs,
+        { withCredentials: true }
+      );
+
+      
+      await login({ username: inputs.username, password: inputs.password });
+
+    
+      navigate("/");
     } catch (err) {
       setErr(err.response?.data || "Registration failed");
     }
@@ -61,8 +79,11 @@ const Register = () => {
               type="password"
               placeholder="Password"
               name="password"
+              minLength={8} 
               onChange={handleChange}
             />
+            <small style={{ color: "#666" }}>Must be at least 8 characters.</small>
+            
             <input
               type="text"
               placeholder="Full Name"

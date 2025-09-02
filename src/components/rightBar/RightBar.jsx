@@ -6,7 +6,7 @@ import { makeRequest } from "../../axios";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
-// Helper function to format activity text
+
 const formatActivityText = (activity) => {
   switch (activity.type) {
     case "post":
@@ -31,11 +31,35 @@ const RightBar = () => {
       makeRequest.get("/friends/suggestions").then((res) => res.data),
   });
 
-  const { data: onlineFriends = [] } = useQuery({
-    queryKey: ["onlineFriends"],
+  const { data: friends = [] } = useQuery({
+    queryKey: ["friends", currentUser?.id],
     queryFn: () =>
-      makeRequest.get("/users/online").then((res) => res.data),
+      makeRequest
+        .get(`/friends/list?userId=${currentUser.id}`)
+        .then((r) => r.data),
+    enabled: !!currentUser?.id,
   });
+
+  const hasFriends = friends.length > 0;
+
+  
+  const { data: onlineUsers = [] } = useQuery({
+    queryKey: ["onlineUsers"],
+    queryFn: () => makeRequest.get("/users/online").then((r) => r.data),
+    enabled: hasFriends,
+  });
+
+ 
+  const friendIdSet = new Set(friends.map((f) => f.id)); // adjust key if your API uses friendId/userId
+  const onlineFriends = hasFriends
+    ? onlineUsers.filter((u) => friendIdSet.has(u.id))
+    : [];
+
+ // const { data: onlineFriends = [] } = useQuery({
+   // queryKey: ["onlineFriends"],
+    //queryFn: () =>
+    //  makeRequest.get("/users/online").then((res) => res.data),
+  //});
 
   const { data: activities = [] } = useQuery({
     queryKey: ["activities"],
@@ -74,7 +98,7 @@ const RightBar = () => {
           ))}
         </div>
 
-        {/* Latest Activities */}
+     
       <div className="item">
           <span>Latest Activities</span>
           {activities.length === 0 ? (
@@ -88,18 +112,17 @@ const RightBar = () => {
               return (
                 <div className="user" key={activity.id}>
                   <div className="userInfo">
-                    {/* ✅ Clicking profile pic goes to user profile */}
+                  
                     <Link to={profileLink}>
                       <img src={"/upload/" + activity.profilePic} alt="" />
                     </Link>
 
             <p>
-              {/* ✅ Clicking name goes to user profile */}
+            
               <Link to={profileLink} style={{ textDecoration: "none", fontWeight: 500 }}>
                 {activity.name}
               </Link>{" "}
 
-              {/* ✅ Clicking text goes to the post if it's a post/comment */}
               {isPostOrComment ? (
                 <Link
                   to={postLink}
@@ -119,19 +142,25 @@ const RightBar = () => {
   )}
 </div>
 
-        {/* Online Friends */}
-        <div className="item">
-          <span>Online Friends</span>
-          {onlineFriends.map((user) => (
-            <div className="user" key={user.id}>
-              <div className="userInfo">
-                <img src={"/upload/" + user.profilePic} alt="" />
-                <div className="online" />
-                <span>{user.name}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+  
+        {hasFriends && (
+          <div className="item">
+            <span>Online Friends</span>
+            {onlineFriends.length === 0 ? (
+              <p>No friends online</p>
+            ) : (
+              onlineFriends.map((user) => (
+                <div className="user" key={user.id}>
+                  <div className="userInfo">
+                    <img src={"/upload/" + user.profilePic} alt="" />
+                    <div className="online" />
+                    <span>{user.name}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
